@@ -20,14 +20,13 @@ class camera{
     camera();
     camera(vector3d loc);
     camera(vector3d loc,float yaw,float pitch);
-    camera(vector3d loc,float yaw,float pitch);
     camera(vector3d loc,float yaw,float pitch,float mv,float mov);
     void Control();
     void UpdateCamera();
     vector3d getVector();
     vector3d getLocation();
-    float camPitch();
-    float camYaw();
+    float getCamPitch();
+    float getCamYaw();
     float getMovevel();
     float getMousevel();
     bool isMouseIn();

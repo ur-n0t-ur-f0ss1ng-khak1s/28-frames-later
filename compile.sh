@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Compile C++ files with g++
-g++ -Wall -std=c++11 *.cpp
+g++ -Wall -std=c++11 *.cpp -lSDL -lGL -lGLU
 
 # Check if the compilation was successful
 if [ $? -eq 0 ]; then

@@ -12,7 +12,7 @@ void camera::lockCamera()
 		camYaw-=360;
 }
 
-void camera::moveCamera(float dir);
+void camera::moveCamera(float dir)
 {
 	float rad=(camYaw+dir)*M_PI/180.0;
 	loc.x-=sin(rad)*movevel;
@@ -44,19 +44,9 @@ camera::camera(vector3d l)
   mi=false;
 }
 
-camera::camera(vector3d l,float yaw,float pitch)
-{
-  loc.change(l);
-  camPitch=pitch;
-  camYaw=yaw;
-  movevel=0.2;
-  mousevel=0.2;
-  mi=false; 
-}
-
 camera::camera(vector3d loc,float yaw,float pitch)
 {
-  loc.change(l);
+  loc.change(loc);
   camPitch=pitch;
   camYaw=yaw;
   movevel=0.2;
@@ -66,7 +56,7 @@ camera::camera(vector3d loc,float yaw,float pitch)
 
 camera::camera(vector3d loc,float yaw,float pitch,float mv,float mov)
 {
-  loc.change(l);
+  loc.change(loc);
   camPitch=pitch;
   camYaw=yaw;
   movevel=mv;
@@ -92,12 +82,12 @@ void camera::Control()
 		{
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(0.0);
-			moveCameraUp(movevel,0.0);
+			moveCameraUp(0.0);
 		}else if(state[SDLK_s])
 		{
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(180.0);
-			moveCameraUp(movevel,180.0);
+			moveCameraUp(180.0);
 		}		
 		if(state[SDLK_a])
 			moveCamera(90.0);
@@ -124,12 +114,12 @@ vector3d camera::getLocation()
   return loc;
 }
 
-float camera::getPitch()
+float camera::getCamPitch()
 {
   return camPitch;
 }
 
-float camera::getYaw()
+float camera::getCamYaw()
 {
   return camYaw;
 }
@@ -165,7 +155,7 @@ void camera::mouseIn(bool b)
   mi=b;
 }
 
-void camera::setSpeed(float mv,float mov);
+void camera::setSpeed(float mv,float mov)
 {
   movevel=mv;
   mousevel=mov;

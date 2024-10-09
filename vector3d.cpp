@@ -55,14 +55,7 @@ void vector3d::change(float a, float b, float c)
   z=c;
 }
 
-void vector3d::change(vector3d& vec2)
-{
-  x=vec2.x;
-  y=vec2.y;
-  z=vec2.z;
-}
-
-void vector3d::change(vector3d vec2)
+void vector3d::change(const vector3d& vec2)
 {
   x=vec2.x;
   y=vec2.y;

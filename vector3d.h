@@ -16,8 +16,8 @@ class vector3d{
     void normalize();
 
     void change(float a, float b, float c);
-    void change(vector3d& vec2);
-    void change(vector3d vec2);
+    void change(const vector3d& vec2);
+    //void change(vector3d vec2);
     void changeX(float a);
     void changeY(float a);
     void changeZ(float a);
