@@ -164,10 +164,12 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		char filen[200];
 		sscanf(coord[i]->c_str(),"mtllib %s",filen);
 		std::string filen2=path+filen;
+    std::cout << filen2 << std::endl;
 		std::ifstream mtlin(filen2.c_str());
 		if(!mtlin.is_open())
 		{
 			out << "connot open the material file " << filen2 << std::endl;
+      std::cerr << "Error: " << strerror(errno) << std::endl;
 			clean();
 			return -1;
 		}
