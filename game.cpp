@@ -39,7 +39,7 @@ game::game()
   std::vector<vector3d> mapsp;
   mapsp.push_back(vector3d(3,4,5));
 
-  unsigned int map=obj.load("collision-test.obj",&mapcp);
+  unsigned int map=obj.load("map.obj",&mapcp);
 
   if (map == 0) {
     std::cerr << "Failed to load map.obj." << std::endl;

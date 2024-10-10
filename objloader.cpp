@@ -166,6 +166,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		std::string filen2=path+filen;
     std::cout << filen2 << std::endl;
 		std::ifstream mtlin(filen2.c_str());
+    std::cout << filen2.c_str() << std::endl;
 		if(!mtlin.is_open())
 		{
 			out << "connot open the material file " << filen2 << std::endl;
@@ -182,25 +183,27 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 			tmp.push_back(c);
 		}
 		char name[200];
-		char filename[200];
+    std::string filename;
 		float amb[3],dif[3],spec[3],alpha,ns,ni;
 		int illum;
 		unsigned int texture;
 		bool ismat=false;
-		strcpy(filename,"\0");
-//		std::cout << tmp.size() << std::endl;
+		//strcpy(filename.c_str(),"\0");
+    filename = "\0";
+		std::cout << tmp.size() << std::endl;
 		for(int i=0;i<tmp.size();i++)
 		{
-			if(tmp[i][0]=='#')
+			if(!tmp[i].empty() && tmp[i][0]=='#')
 				continue;
 			if(tmp[i][0]=='n' && tmp[i][1]=='e' && tmp[i][2]=='w')
 			{
 				if(ismat)
 				{
-					if(strcmp(filename,"\0")!=0 && strcmp(filename,"collision")!=0)
+					if(strcmp(filename.c_str(),"\0")!=0 && strcmp(filename.c_str(),"collision")!=0)
 					{
 						materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,texture));
-						strcpy(filename,"\0");
+            //strcpy(filename.c_str(),"\0");
+            filename = "\0";
 					}else{
 							materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,-1));				
 					}
@@ -238,26 +241,30 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 				ismat=true;
 			}else if(tmp[i][0]=='m' && tmp[i][1]=='a')
 			{
-				sscanf(tmp[i].c_str(),"map_Kd %s",filename);
+        std::cout << "testing 242" << std::endl;
+				sscanf(tmp[i].c_str(),"map_Kd %s",filename.c_str());
 				bool l=0;
-				out << "Opening image: " << filename << std::endl;
-				std::string filename2=path+filename;
+				out << "Opening image: " << filename.c_str() << std::endl;
+				std::string filename2=path+filename.c_str();
+        std::cout << filename2 << std::endl;
 				for(int i=0;i<loadedTextures.size();i++)
-					if(loadedTextures[i]==filename2)
+					if(loadedTextures[i]==filename2.c_str())
 					{
-						out << "loading "  << filename2 << std::endl;
+						out << "loading "  << filename2.c_str() << std::endl;
 						texture=loadedTexturesNum[i];
 						l=1;
 						break;
 					}
 				if(l==0)
-					texture=loadTexture(filename2.c_str());
+          std::cout << "trying to load texture" << std::endl;
+					//texture=loadTexture(filename2.c_str());
+          std::cout << "succeded in loading texture" << std::endl;
 				ismat=true;
 			}
 		}
 				if(ismat)
 				{
-					if(strcmp(filename,"\0")!=0)
+					if(strcmp(filename.c_str(),"\0")!=0)
 					{
 						materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,texture));
 					}else{
