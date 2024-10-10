@@ -10,6 +10,7 @@
 #include <iostream>
 #include <cmath>
 #include <map>
+#include "vector3d.h"
 #include "collisionplane.h"
 #ifndef OBJLOADER_H
 #define OBJLOADER_H
