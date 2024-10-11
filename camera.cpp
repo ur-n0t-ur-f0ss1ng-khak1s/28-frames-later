@@ -82,12 +82,12 @@ void camera::Control()
 		{
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(0.0);
-			moveCameraUp(0.0);
+			//moveCameraUp(0.0);
 		}else if(state[SDLK_s])
 		{
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(180.0);
-			moveCameraUp(180.0);
+			//moveCameraUp(180.0);
 		}		
 		if(state[SDLK_a])
 			moveCamera(90.0);

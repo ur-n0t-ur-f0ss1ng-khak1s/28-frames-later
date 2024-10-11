@@ -9,13 +9,14 @@
 #include "collisionplane.h"
 #include "collisionsphere.h"
 #include "functions.h"
-#include "camera.h"
 #include "level.h"
+#include "player.h"
 
 class game{
   objloader obj;
   camera cam;
   std::vector<std::unique_ptr<level>> levels;
+  player* player1;
 
   void update();
   void show();

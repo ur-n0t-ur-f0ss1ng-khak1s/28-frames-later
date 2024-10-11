@@ -257,7 +257,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 					}
 				if(l==0)
           std::cout << "trying to load texture" << std::endl;
-					//texture=loadTexture(filename2.c_str());
+					texture=loadTexture(filename2.c_str());
           std::cout << "succeded in loading texture" << std::endl;
 				ismat=true;
 			}

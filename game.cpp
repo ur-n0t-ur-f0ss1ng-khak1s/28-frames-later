@@ -19,7 +19,6 @@ game::game()
     throw std::runtime_error("Failed to set video mode");
   }
 
-  cam.setLocation(vector3d(10,10,10));
   glClearColor(0.5,0.5,0.5,1.0);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -46,6 +45,7 @@ game::game()
     throw std::runtime_error("Failed to load map.obj");
   }
   levels.push_back(std::make_unique<level>("test-level",map,mapcp,mapsp));
+  player1=new player("player1",collisionsphere(vector3d(10,30,0),3.0),0.2,0.2,0.2);
 }
 
 game::~game()
@@ -74,7 +74,7 @@ void game::start()
 					std::cout << "quiting..." << std::endl;
 					break;
         case SDL_MOUSEBUTTONDOWN:
-          cam.mouseIn(true);
+          player1->cam.mouseIn(true);
           SDL_ShowCursor(SDL_DISABLE);
           break;
 				case SDL_KEYDOWN:
@@ -98,15 +98,17 @@ void game::update()
 {
   for(int i=0;i<levels.size();i++)
     levels[i]->update();
+  player1->update(levels[0]->getCollisionPlanes());
 }
 
 void game::show()
 {
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  cam.Control();
-  drawSkybox(50.0);
-  cam.UpdateCamera();
+  player1->cam.Control();
+  //drawSkybox(50.0);
+  player1->cam.UpdateCamera();
   for(int i=0;i<levels.size();i++)
     levels[i]->show();
+  player1->show();
 }

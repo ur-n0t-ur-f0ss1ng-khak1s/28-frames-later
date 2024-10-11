@@ -2,8 +2,8 @@ map.obj
 newmtl None_brickwall.jpg
 Opening image: brickwall.bmp
 newmtl collision
-newmtl None_2640354735_3aacb670e5
-Opening image: share/2640354735_3aacb670e5.bmp
+newmtl None_a
+Opening image: share/a.bmp
 newmtl None_830.jpg
 Opening image: 830.bmp
 v 87.4259 8.44996 39.035
