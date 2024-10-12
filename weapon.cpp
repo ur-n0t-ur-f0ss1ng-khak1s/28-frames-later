@@ -48,31 +48,148 @@ void weapon::update()
 {
   test();
   lastshot++;
+  curframe++;
+  if(curmode==1) //normal
+  {
+    if (curframe>=normalanimation)
+      curframe=0;
+  }else if(curmode==2)
+  {
+    if(curframe>=normalanimation+fireanimation)
+    {
+      if(isautomatic && isfired) //may be a BUG
+      {
+        curframe=normalanimation;
+      }else{
+        curmode=1;
+        curframe=0;
+      }
+    }
+  }else if(curmode==3)
+  {
+    if(curframe>=normalanimation+fireanimation+reloadanimation)
+    {
+      curmode=1;
+      curframe=0;
+      isreloading=false;
+    }
+  }
+
+  vector3d tmpVec(curpos-position_expected);
+  tmpVec.normalize();
+  tmpVec*=0.3;
+  if(std::abs(position_expected.x-curpos.x)<0.3 &&std::abs(position_expected.y-curpos.y)<0.3 &&std::abs(position_expected.z-curpos.z)<0.3)
+    curpos=position_expected;
+
+  vector3d tmpVec(currot-rotation_expected);
+  tmpVec.normalize();
+  tmpVec*=0.3;
+  if(std::abs(position_expected.x-currot.x)<0.3 &&std::abs(position_expected.y-currot.y)<0.3 &&std::abs(position_expected.z-currot.z)<0.3)
+    currot=position_expected;
 }
 
 void weapon::show()
 {
-
+  glPushMatrix();
+    glTranslatef(curpos.x,curpos.y,curpos.z);
+    glRotatef(currot.x,1,0,0);
+    glRotatef(currot.y,0,1,0);
+    glRotatef(currot.z,0,0,1);
+    glCallList(frames[curframe]);
+  glPopMatrix();
 }
 
 bool weapon::fire(vector3d& direction,vector3d camdirection)
 {
-
+  if(isreloading)
+    return false;
+  if((!isautomatric && !isfired || isautomatic))
+  {
+    if(lastshot>=speed)
+    {
+      if(bulletsInMag>0)
+      {
+        if(isaim)
+        {
+          direction.x=camdirection.x+((float)(rand()%3-1)/aimprecision);
+          direction.y=camdirection.y+((float)(rand()%3-1)/aimprecision);
+          direction.z=camdirection.z+((float)(rand()%3-1)/aimprecision);
+        }else{
+           direction.x=camdirection.x+((float)(rand()%3-1)/precision);
+          direction.y=camdirection.y+((float)(rand()%3-1)/precision);
+          direction.z=camdirection.z+((float)(rand()%3-1)/precision);
+        }
+        isfired=true;
+        lastshot=0;
+        bulletInMag--;
+        curframe=normalanimation;
+        curmode=2;
+        return true;
+      }else{
+        reload();
+        return false;
+      }
+    }
+  }
+  return 0;
 }
 
 void weapon::stopfire()
 {
-
+  isfired=false;
 }
 
 void weapon::reload()
 {
+  if(isreloading && maxBulletsInMag!=bulletsInMag)
+  {
+    isreloading=true;
+    if(allbullets>maxBulletsInMag-bulletsInMag)
+    {
+      allbullets-=maxBulletsInMag-bulletsInMag;
+      bulletsInMag=maxBulletsInMag;
+    }else{
+      bulletsInMag=allbullets+bulletsInMag;
+      allbullets=0;
+    }
+    curframe=normalanimation+fireanimation;
+    curmode=3;
+  }
+}
 
+void weapon::aim()
+{
+  isaim=!isaim;
+  if(isaim)
+  {
+    rotation_expected=aimrotation;
+    position_expected=aimposition;
+  }else
+  {
+    rotation_expected=rotation;
+    position_expected=position;
+  }
 }
 
 void weapon::test()
 {
-
+  if(istest)
+  {
+    Uint8* keys=SDL_GetKeyState(NULL);
+    if(keys[SDLK_j])
+      curpos.x-=0.02;
+    if(keys[SDLK_l])
+      curpos.x+=0.02;
+    if(keys[SDLK_k])
+      curpos.z-=0.02;
+    if(keys[SDLK_k])
+      curpos.z+=0.02;
+    if(keys[SDLK_k])
+      currot.y-=0.02;
+    if(keys[SDLK_k])
+      currot.y+=0.02;
+    std::cout << curpos << currot << endl;
+  }
 }
 
 void weapon::addBullets(unsigned int num)

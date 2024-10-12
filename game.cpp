@@ -45,6 +45,7 @@ game::game()
     throw std::runtime_error("Failed to load map.obj");
   }
   levels.push_back(std::make_unique<level>("test-level",map,mapcp,mapsp));
+  //weapons.push_back(new weapon())
   player1=new player("player1",collisionsphere(vector3d(10,30,0),3.0),0.2,0.2,0.2);
 }
 

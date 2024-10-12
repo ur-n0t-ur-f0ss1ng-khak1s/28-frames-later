@@ -10,6 +10,7 @@
 #include "collisionsphere.h"
 #include "collision.h"
 #include "camera.h"
+#include "weapon.h"
 
 class player{
   std::string name;
@@ -22,9 +23,12 @@ class player{
   float lookspeed;
   float energy;
   int points;
+  std::vector<weapon*> weapons;
+  int curweapon;
+  bool isWeapon;
   public:
     camera cam;
-    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks);
+    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,weapon* wep);
     ~player();
     void update(std::vector<collisionplane>& collplane);
     void show();
@@ -39,6 +43,13 @@ class player{
     //setters
     void setHealth(int h);
     void addPoints(int n);
+
+    void addWeapon(weapon* wep);
+    void changeWeapon(int num);
+    void changeWeaponDown();
+    void changeWeaponUp();
+    weapon* getCurrentWeapon();
+    void haveWeapon(bool b);
 };
 
 #endif
