@@ -11,6 +11,7 @@
 #include "functions.h"
 #include "level.h"
 #include "player.h"
+#include "weapon.h"
 
 class game{
   objloader obj;
@@ -18,7 +19,7 @@ class game{
   std::vector<std::unique_ptr<level>> levels;
   std::vector<std::unique_ptr<weapon>> weapons;
   player* player1;
-
+  std::ofstream out; 
   void update();
   void show();
   unsigned int loadTexture(const char* filename);

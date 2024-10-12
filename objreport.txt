@@ -273,3 +273,41 @@ faces[i]->faces[0]-1: 172 176 177 173
 faces[i]->texcoord[0]-1 3
 faces[i]->faces[0]-1: 174 170 173 177 
 3.....
+Cannot open file: data/weapon/weapon1_000001.obj
+Cannot open file: data/weapon/weapon1_000002.obj
+Cannot open file: data/weapon/weapon1_000003.obj
+Cannot open file: data/weapon/weapon1_000004.obj
+Cannot open file: data/weapon/weapon1_000005.obj
+Cannot open file: data/weapon/weapon1_000006.obj
+Cannot open file: data/weapon/weapon1_000007.obj
+Cannot open file: data/weapon/weapon1_000008.obj
+Cannot open file: data/weapon/weapon1_000009.obj
+Cannot open file: data/weapon/weapon1_000010.obj
+Cannot open file: data/weapon/weapon1_000011.obj
+Cannot open file: data/weapon/weapon1_000012.obj
+Cannot open file: data/weapon/weapon1_000013.obj
+Cannot open file: data/weapon/weapon1_000014.obj
+Cannot open file: data/weapon/weapon1_000015.obj
+Cannot open file: data/weapon/weapon1_000016.obj
+Cannot open file: data/weapon/weapon1_000017.obj
+Cannot open file: data/weapon/weapon1_000018.obj
+Cannot open file: data/weapon/weapon1_000019.obj
+Cannot open file: data/weapon/weapon1_000020.obj
+Cannot open file: data/weapon/weapon1_000021.obj
+Cannot open file: data/weapon/weapon1_000022.obj
+Cannot open file: data/weapon/weapon1_000023.obj
+Cannot open file: data/weapon/weapon1_000024.obj
+Cannot open file: data/weapon/weapon1_000025.obj
+Cannot open file: data/weapon/weapon1_000026.obj
+Cannot open file: data/weapon/weapon1_000027.obj
+Cannot open file: data/weapon/weapon1_000028.obj
+Cannot open file: data/weapon/weapon1_000029.obj
+Cannot open file: data/weapon/weapon1_000030.obj
+Cannot open file: data/weapon/weapon1_000031.obj
+Cannot open file: data/weapon/weapon1_000032.obj
+Cannot open file: data/weapon/weapon1_000033.obj
+Cannot open file: data/weapon/weapon1_000034.obj
+Cannot open file: data/weapon/weapon1_000035.obj
+Cannot open file: data/weapon/weapon1_000036.obj
+Cannot open file: data/weapon/weapon1_000037.obj
+Cannot open file: data/weapon/weapon1_000038.obj

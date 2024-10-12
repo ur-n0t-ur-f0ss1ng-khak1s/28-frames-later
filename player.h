@@ -5,6 +5,7 @@
 #include <GL/glu.h>
 #include <vector>
 #include <string>
+#include <memory>
 #include "vector3d.h"
 #include "collisionplane.h"
 #include "collisionsphere.h"
@@ -28,7 +29,7 @@ class player{
   bool isWeapon;
   public:
     camera cam;
-    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,weapon* wep);
+    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::unique_ptr<weapon>::pointer wep);
     ~player();
     void update(std::vector<collisionplane>& collplane);
     void show();

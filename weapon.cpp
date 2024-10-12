@@ -1,3 +1,5 @@
+#include "weapon.h"
+
 weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speed,const char* name,bool isa)
 {
   frames=anim;
@@ -17,8 +19,8 @@ weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,u
   strength=str;
   allbullets=allbul;
   maxBulletsInMag=maxb;
-  speed=sp;
-  name=na;
+  speed=speed;
+  name=name;
 
   position_expected=position;
   position_expected=rotation;
@@ -31,7 +33,7 @@ weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,u
   isautomatic=isa;
   isfired=false;
   istest=true;
-  bulletsInMag=maxbulletsInMag;
+  bulletsInMag=maxBulletsInMag;
   
   lastshot=1000;
 
@@ -81,7 +83,7 @@ void weapon::update()
   if(std::abs(position_expected.x-curpos.x)<0.3 &&std::abs(position_expected.y-curpos.y)<0.3 &&std::abs(position_expected.z-curpos.z)<0.3)
     curpos=position_expected;
 
-  vector3d tmpVec(currot-rotation_expected);
+  tmpVec.change(currot-rotation_expected);
   tmpVec.normalize();
   tmpVec*=0.3;
   if(std::abs(position_expected.x-currot.x)<0.3 &&std::abs(position_expected.y-currot.y)<0.3 &&std::abs(position_expected.z-currot.z)<0.3)
@@ -103,7 +105,7 @@ bool weapon::fire(vector3d& direction,vector3d camdirection)
 {
   if(isreloading)
     return false;
-  if((!isautomatric && !isfired || isautomatic))
+  if((!isautomatic && !isfired || isautomatic))
   {
     if(lastshot>=speed)
     {
@@ -121,7 +123,7 @@ bool weapon::fire(vector3d& direction,vector3d camdirection)
         }
         isfired=true;
         lastshot=0;
-        bulletInMag--;
+        bulletsInMag--;
         curframe=normalanimation;
         curmode=2;
         return true;
@@ -188,7 +190,7 @@ void weapon::test()
       currot.y-=0.02;
     if(keys[SDLK_k])
       currot.y+=0.02;
-    std::cout << curpos << currot << endl;
+    std::cout << curpos << currot << std::endl;
   }
 }
 
@@ -236,9 +238,3 @@ unsigned int weapon::getOuterView()
 {
   return outerview;
 }
-
-void weapon::aim()
-{
-
-}
-

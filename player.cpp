@@ -1,6 +1,6 @@
 #include "player.h"
 
-player::player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,weapon* wep)
+player::player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::unique_ptr<weapon>::pointer wep)
 {
   name=n;
   cs=ccs;
@@ -14,7 +14,7 @@ player::player(const char* n,collisionsphere ccs,float sprints,float normals,flo
   energy=10;
   isground=iscollision=issprint=false;
   health=100;
-  weapons.push_back(wep);
+  weapons.push_back(std::move(wep));
   curweapon=0;
   isWeapon=true;
 }
@@ -84,37 +84,37 @@ void player::addPoints(int n)
   points+=n;
 }
 
-void weapon::addWeapon(weapon* wep)
+void player::addWeapon(weapon* wep)
 {
   weapons.push_back(wep);
 }
 
-void weapon::changeWeapon(int num)
+void player::changeWeapon(int num)
 {
   if(weapons.size()>num)
     curweapon=num;
 }
 
-void weapon::changeWeaponDown()
+void player::changeWeaponDown()
 {
   curweapon--;
   if(curweapon<0)
     curweapon=weapons.size()-1;
 }
 
-void weapon::changeWeaponUp()
+void player::changeWeaponUp()
 {
   curweapon++;
   if(curweapon>=weapons.size())
     curweapon=0;
 }
 
-weapon* weapon::getCurrentWeapon()
+weapon* player::getCurrentWeapon()
 {
   return weapons[curweapon];
 }
 
-void weapon::haveWeapon(bool b)
+void player::haveWeapon(bool b)
 {
   isWeapon=b;
 }
