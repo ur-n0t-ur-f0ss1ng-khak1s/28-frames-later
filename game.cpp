@@ -110,6 +110,7 @@ void game::show()
 {
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
+  player1->show();
   player1->cam.Control();
   //drawSkybox(50.0);
   player1->cam.UpdateCamera();

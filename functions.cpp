@@ -36,7 +36,7 @@ void drawSkybox(float size)
 {
 	bool b1=glIsEnabled(GL_TEXTURE_2D);	//new, we left the textures turned on, if it was turned on
 	glDisable(GL_LIGHTING);	//turn off lighting, when making the skybox
-	glDisable(GL_DEPTH_TEST);	//turn off depth texting
+	//glDisable(GL_DEPTH_TEST);	//turn off depth texting
 	glEnable(GL_TEXTURE_2D);	//and turn on texturing
 	glBindTexture(GL_TEXTURE_2D,skybox[SKY_BACK]);	//use the texture we want
 	glBegin(GL_QUADS);	//and draw a face

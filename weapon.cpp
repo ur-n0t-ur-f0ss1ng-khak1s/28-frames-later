@@ -77,7 +77,7 @@ void weapon::update()
     }
   }
 
-  vector3d tmpVec(curpos-position_expected);
+  vector3d tmpVec(position_expected-curpos);
   tmpVec.normalize();
   tmpVec*=0.3;
   if(std::abs(position_expected.x-curpos.x)<0.3 &&std::abs(position_expected.y-curpos.y)<0.3 &&std::abs(position_expected.z-curpos.z)<0.3)
@@ -179,18 +179,18 @@ void weapon::test()
   {
     Uint8* keys=SDL_GetKeyState(NULL);
     if(keys[SDLK_j])
-      curpos.x-=0.02;
+      position_expected.x-=0.02;
     if(keys[SDLK_l])
-      curpos.x+=0.02;
+      position_expected.x+=0.02;
     if(keys[SDLK_k])
-      curpos.z-=0.02;
+      position_expected.z-=0.02;
     if(keys[SDLK_k])
-      curpos.z+=0.02;
+      position_expected.z+=0.02;
     if(keys[SDLK_k])
-      currot.y-=0.02;
+      position_expected.y-=0.02;
     if(keys[SDLK_k])
-      currot.y+=0.02;
-    std::cout << curpos << currot << std::endl;
+      position_expected.y+=0.02;
+    std::cout << position_expected << position_expected << std::endl;
   }
 }
 
@@ -238,3 +238,4 @@ unsigned int weapon::getOuterView()
 {
   return outerview;
 }
+
