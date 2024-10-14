@@ -48,7 +48,7 @@ game::game()
   levels.push_back(std::make_unique<level>("test-level",map,mapcp,mapsp));
   std::vector<unsigned int> anim;
   std::vector<std::unique_ptr<weapon>> weapons;
-  loadAnimation(anim, "data/weapon/weapon1",38);
+  loadAnimation(anim, "data/weapon1/weapon",38);
   weapons.push_back(std::make_unique<weapon>(anim,anim[0],1,16,19,vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
   player1=new player("player1",collisionsphere(vector3d(10,30,0),3.0),0.2,0.2,0.2,weapons[0].get());
 }
@@ -125,16 +125,16 @@ void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filen
 	char tmp[7];
 	for(int i=1;i<=frames;i++)
 	{
-		std::string s(filename+'_');
+		std::string s(filename); //string misformatting here will cause a segfault 
 		sprintf(frame,"%d",i);
 		int len=strlen(frame);
 		for(int j=0;j<len;j++)
 			tmp[j]=frame[j];
-		for(int j=0;j<6-len;j++)
+		for(int j=0;j<4-len;j++)
 			frame[j]='0';
-		for(int j=6-len;j<6;j++)
-			frame[j]=tmp[j-6+len];
-		frame[6]=NULL;
+		for(int j=4-len;j<4;j++)
+			frame[j]=tmp[j-4+len];
+		frame[4]=NULL;
 		s+=frame;
 		s+=".obj";
 		out << s << std::endl;
