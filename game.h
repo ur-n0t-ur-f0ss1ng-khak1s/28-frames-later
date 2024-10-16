@@ -17,7 +17,7 @@ class game{
   objloader obj;
   camera cam;
   std::vector<std::unique_ptr<level>> levels;
-  std::vector<std::unique_ptr<weapon>> weapons;
+  std::vector<weapon> weapons;
   player* player1;
   std::ofstream out; 
   void update();

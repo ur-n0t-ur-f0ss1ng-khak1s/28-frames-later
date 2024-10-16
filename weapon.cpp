@@ -93,8 +93,7 @@ void weapon::update()
 void weapon::show()
 {
   glPushMatrix();
-    //std::cout << "x: " << curpos.x << " y: " << curpos.y << " z: " << curpos.z << std::endl;
-    //std::cout << "curframe: " << curframe << " frames.size(): " << frames.size() << std::endl;
+    std::cout << "curframe: " << curframe << " frames.size(): " << frames.size() << std::endl;
     glTranslatef(curpos.x,curpos.y,curpos.z);
     glRotatef(currot.x,1,0,0);
     glRotatef(currot.y,0,1,0);
