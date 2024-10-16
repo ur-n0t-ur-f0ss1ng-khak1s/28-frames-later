@@ -77,7 +77,7 @@ void weapon::update()
     }
   }
 
-  vector3d tmpVec(position_expected-curpos);
+  vector3d tmpVec(curpos);
   tmpVec.normalize();
   tmpVec*=0.3;
   if(std::abs(position_expected.x-curpos.x)<0.3 &&std::abs(position_expected.y-curpos.y)<0.3 &&std::abs(position_expected.z-curpos.z)<0.3)
@@ -93,11 +93,18 @@ void weapon::update()
 void weapon::show()
 {
   glPushMatrix();
+    //std::cout << "x: " << curpos.x << " y: " << curpos.y << " z: " << curpos.z << std::endl;
+    //std::cout << "curframe: " << curframe << " frames.size(): " << frames.size() << std::endl;
     glTranslatef(curpos.x,curpos.y,curpos.z);
     glRotatef(currot.x,1,0,0);
     glRotatef(currot.y,0,1,0);
     glRotatef(currot.z,0,0,1);
-    glCallList(frames[curframe]);
+    //glCallList(frames[curframe]);
+    if(curframe >= 0 && curframe < frames.size()) {
+      glCallList(frames[curframe]);
+    } else {
+      std::cerr << "curframe is out of bounds!" << std::endl;
+    }
   glPopMatrix();
 }
 
@@ -190,7 +197,7 @@ void weapon::test()
       position_expected.y-=0.02;
     if(keys[SDLK_k])
       position_expected.y+=0.02;
-    std::cout << position_expected << position_expected << std::endl;
+    std::cout << "line 200 position expected: " << position_expected << position_expected << std::endl;
   }
 }
 

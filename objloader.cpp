@@ -164,12 +164,10 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		char filen[200];
 		sscanf(coord[i]->c_str(),"mtllib %s",filen);
 		std::string filen2=path+filen;
-    std::cout << filen2 << std::endl;
 		std::ifstream mtlin(filen2.c_str());
-    std::cout << filen2.c_str() << std::endl;
 		if(!mtlin.is_open())
 		{
-			out << "connot open the material file " << filen2 << std::endl;
+			out << "cannot open the material file " << filen2 << std::endl;
       std::cerr << "Error: " << strerror(errno) << std::endl;
 			clean();
 			return -1;
@@ -188,9 +186,8 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		int illum;
 		unsigned int texture;
 		bool ismat=false;
-		//strcpy(filename.c_str(),"\0");
     filename = "\0";
-		std::cout << tmp.size() << std::endl;
+		//std::cout << tmp.size() << std::endl;
 		for(int i=0;i<tmp.size();i++)
 		{
 			if(!tmp[i].empty() && tmp[i][0]=='#')
@@ -202,7 +199,6 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 					if(strcmp(filename.c_str(),"\0")!=0 && strcmp(filename.c_str(),"collision")!=0)
 					{
 						materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,texture));
-            //strcpy(filename.c_str(),"\0");
             filename = "\0";
 					}else{
 							materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,-1));				
@@ -241,12 +237,10 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 				ismat=true;
 			}else if(tmp[i][0]=='m' && tmp[i][1]=='a')
 			{
-        std::cout << "testing 242" << std::endl;
 				sscanf(tmp[i].c_str(),"map_Kd %s",filename.c_str());
 				bool l=0;
 				out << "Opening image: " << filename.c_str() << std::endl;
 				std::string filename2=path+filename.c_str();
-        std::cout << filename2 << std::endl;
 				for(int i=0;i<loadedTextures.size();i++)
 					if(loadedTextures[i]==filename2.c_str())
 					{
@@ -256,9 +250,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 						break;
 					}
 				if(l==0)
-          std::cout << "trying to load texture" << std::endl;
 					texture=loadTexture(filename2.c_str());
-          std::cout << "succeded in loading texture" << std::endl;
 				ismat=true;
 			}
 		}

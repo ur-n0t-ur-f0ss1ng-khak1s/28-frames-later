@@ -24,6 +24,7 @@ class game{
   void show();
   unsigned int loadTexture(const char* filename);
   void loadAnimation(std::vector<unsigned int>& anim,std::string filename,int frames);
+//  void loadAnimation(std::vector<unsigned int>& frames,std::string filename,unsigned int num);
 
   public:
     game();

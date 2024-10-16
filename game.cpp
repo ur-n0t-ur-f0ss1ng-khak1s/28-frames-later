@@ -49,7 +49,7 @@ game::game()
   std::vector<unsigned int> anim;
   std::vector<std::unique_ptr<weapon>> weapons;
   loadAnimation(anim, "data/weapon1/weapon",38);
-  weapons.push_back(std::make_unique<weapon>(anim,anim[0],1,16,19,vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
+  weapons.push_back(std::make_unique<weapon>(anim,anim[0],1,16,19,vector3d(0.5,0,-1.44),vector3d(0,-80,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
   player1=new player("player1",collisionsphere(vector3d(10,30,0),3.0),0.2,0.2,0.2,weapons[0].get());
 }
 
@@ -66,6 +66,8 @@ void game::start()
 	bool running=true;
 	int menuoption=0;
   std::cout << "started the game" << std::endl;
+  vector3d direction;
+  bool mousebuttondown=false;
 	while(running)
 	{
 		startTime=SDL_GetTicks();
@@ -81,6 +83,20 @@ void game::start()
         case SDL_MOUSEBUTTONDOWN:
           player1->cam.mouseIn(true);
           SDL_ShowCursor(SDL_DISABLE);
+          if(event.button.button==SDL_BUTTON_LEFT)
+          {
+            mousebuttondown=true;
+            player1->getCurrentWeapon()->fire(direction,player1->cam.getVector());
+          }else if(event.button.button==SDL_BUTTON_RIGHT)
+          {
+            player1->getCurrentWeapon()->aim();
+          }else if(event.button.button==SDL_BUTTON_WHEELUP)
+          {
+            player1->changeWeaponUp();
+          }else if(event.button.button==SDL_BUTTON_WHEELDOWN)
+          {
+            player1->changeWeaponDown();
+          }
           break;
 				case SDL_KEYDOWN:
           if(event.key.keysym.sym==SDLK_ESCAPE)
@@ -88,14 +104,37 @@ void game::start()
             running=false;
             break;
           }
+          switch(event.key.keysym.sym)
+          {
+            case SDLK_0:
+              player1->changeWeapon(0);
+              break;
+            case SDLK_1:
+              player1->changeWeapon(1);
+              break;
+            case SDLK_2:
+              player1->changeWeapon(2);
+              break;
+            case SDLK_r:
+              player1->getCurrentWeapon()->reload();
+              break;
+          }
+          break;
+        case SDL_MOUSEBUTTONUP:
+          mousebuttondown=false;
+          player1->getCurrentWeapon()->stopfire();
+          break;
 			}
 		}
+    if(mousebuttondown)
+      player1->getCurrentWeapon()->fire(direction,player1->cam.getVector());
 		update();
 		show();
 
 		SDL_GL_SwapBuffers();
-//		if(1000/FPS>(SDL_GetTicks()-startTime))
-//			SDL_Delay(1000/FPS-(SDL_GetTicks()-startTime));
+    int FPS=60;
+		if(1000/FPS>(SDL_GetTicks()-startTime))
+			SDL_Delay(1000/FPS-(SDL_GetTicks()-startTime));
 	}
 }
 
@@ -112,20 +151,48 @@ void game::show()
   glLoadIdentity();
   player1->show();
   player1->cam.Control();
-  //drawSkybox(50.0);
+  drawSkybox(50.0);
   player1->cam.UpdateCamera();
   for(int i=0;i<levels.size();i++)
     levels[i]->show();
   player1->show();
 }
 
+//void game::loadAnimation(std::vector<unsigned int>& frames,std::string filename,unsigned int num)
+//{
+//  char tmp[200];
+//  for(int i=1;i<=num;i++)
+//  {
+//    if(i<10)
+//      sprintf(tmp,"00%d",i);
+//    else if(i<100)
+//      sprintf(tmp,"00%d",i);
+//    else if(i<1000)
+//      sprintf(tmp,"%d",i);
+//    else if(i<10000)
+//      sprintf(tmp,"%d",i);
+//    else if(i<100000)
+//      sprintf(tmp,"%d",i);
+//    else if(i<1000000)
+//      sprintf(tmp,"%d",i);
+//    std::string tmp2(filename+tmp);
+//    tmp2+=".obj";
+//    std::cout << "loading " << tmp2 << std::endl;
+//    unsigned int id=obj.load(tmp2,NULL);
+//    frames.push_back(id);
+//  }
+//}
+  
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)
 {
 	char frame[8];
 	char tmp[7];
+  std::cout << "frames: " << frames << std::endl;
+  frames = 38;
 	for(int i=1;i<=frames;i++)
 	{
 		std::string s(filename); //string misformatting here will cause a segfault 
+    
 		sprintf(frame,"%d",i);
 		int len=strlen(frame);
 		for(int j=0;j<len;j++)
@@ -140,6 +207,4 @@ void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filen
 		out << s << std::endl;
 		anim.push_back(obj.load(s,NULL));
 	}
-
-//	std::cout << "load animation" << std::endl;
 }
