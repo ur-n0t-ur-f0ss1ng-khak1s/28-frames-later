@@ -49,7 +49,7 @@ game::game()
   std::vector<unsigned int> anim;
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(weapon(anim,anim[0],1,16,19,vector3d(-0.8,-1.13,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
+  weapons.push_back(weapon(anim,anim[0],1,16,20,vector3d(-0.8,-1.13,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",true));
   player1=new player("player1",collisionsphere(vector3d(0,0,0),3.0),0.2,0.2,0.2,&weapons[0]);
 }
 
@@ -119,24 +119,22 @@ void game::start()
               break;
           }
           break;
-//        case SDL_MOUSEBUTTONUP:
-//          mousebuttondown=false;
-//          player1->getCurrentWeapon()->stopfire();
-//          break;
         case SDL_MOUSEBUTTONUP:
-          switch(event.button.button)
-					{
-						case SDL_BUTTON_LEFT:
-              mousebuttondown=false;
-							player1->getCurrentWeapon()->stopfire();
-							break;
-					}
-					break;
+          mousebuttondown=false;
+          player1->getCurrentWeapon()->stopfire();
+          break;
+//        case SDL_MOUSEBUTTONUP:
+//          switch(event.button.button)
+//					{
+//						case SDL_BUTTON_LEFT:
+//              mousebuttondown=false;
+//							player1->getCurrentWeapon()->stopfire();
+//							break;
+//					}
+//					break;
 	 
 			}
 		}
-    if(mousebuttondown)
-      player1->getCurrentWeapon()->fire(direction,player1->cam.getVector());
 
 		update();
 

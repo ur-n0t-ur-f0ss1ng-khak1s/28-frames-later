@@ -1,6 +1,6 @@
 #include "weapon.h"
 
-weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d ofset,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speed,const char* name,bool isa)
+weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d ofset,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speedd,const char* namee,bool isa)
 {
   frames=anim;
   outerview=ol;
@@ -24,8 +24,8 @@ weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,u
   strength=str;
   allbullets=allbul;
   maxBulletsInMag=maxb;
-  speed=speed;
-  name=name;
+  speed=speedd;
+  name=namee;
 
   position_expected=position;
   rotation_expected=rotation;
@@ -61,7 +61,7 @@ void weapon::update()
       curframe=0;
   }else if(curmode==2)
   {
-    if(curframe>=normalanimation+fireanimation)
+    if(curframe>normalanimation+fireanimation)
     {
       if(isautomatic && isfired) //may be a BUG
       {
@@ -109,15 +109,9 @@ void weapon::show()
 {
   test();
   glPushMatrix();
-    //std::cout << "curframe: " << curframe << " frames.size(): " << frames.size() << std::endl;
     glTranslatef(curpos.x,curpos.y,curpos.z);
-    //glRotatef(pitch, 1.0f, 0.0f, 0.0f);
     glRotatef(yaw-86.0f, 0.0f, 1.0f, 0.0f);
     glRotatef(-pitch, 0.0f, 0.0f, 1.0f);
-//    glRotatef(rotation_expected.x,1,0,0);
-//    glRotatef(rotation_expected.y,0,1,0);
-    //glRotatef(currot.z,0,0,1);
-    //glCallList(frames[curframe]);
     if(curframe >= 0 && curframe < frames.size()) {
       glCallList(frames[curframe]);
     } else {
@@ -168,7 +162,7 @@ void weapon::stopfire()
 
 void weapon::reload()
 {
-  if(isreloading && maxBulletsInMag!=bulletsInMag)
+  if(!isreloading && maxBulletsInMag!=bulletsInMag)
   {
     isreloading=true;
     if(allbullets>maxBulletsInMag-bulletsInMag)
@@ -189,11 +183,14 @@ void weapon::aim()
   isaim=!isaim;
   if(isaim)
   {
-    std::cout << "AIMING :p" << std::endl;
+    offset.y-=1;
+    offset.x-=1;
     rotation_expected+=aimrotation;
     position_expected+=aimposition;
   }else
   {
+    offset.y+=1;
+    offset.x+=1;
     rotation_expected+=rotation;
     position_expected+=position;
   }
