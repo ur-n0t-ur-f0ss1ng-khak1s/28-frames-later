@@ -64,7 +64,7 @@ camera::camera(vector3d loc,float yaw,float pitch,float mv,float mov)
   mi=false; 
 }
 
-void camera::Control()
+void camera::control()
 {
 	if(mi)
 	{
@@ -98,7 +98,7 @@ void camera::Control()
 	glRotatef(-camYaw,0.0,1.0,0.0);
 }
 
-void camera::UpdateCamera()
+void camera::update()
 {
   glTranslatef(-loc.x,-loc.y,-loc.z);
 }

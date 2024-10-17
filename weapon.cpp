@@ -69,35 +69,55 @@ void weapon::update()
     }
   }else if(curmode==3)
   {
-    if(curframe>=normalanimation+fireanimation+reloadanimation)
+    if(curframe>=normalanimation+fireanimation+reloadanimation-1)
     {
       curmode=1;
       curframe=0;
       isreloading=false;
     }
   }
+//same as the block below but with currot and rotation_expected swapped
+//	vector3d tmpVec(curpos-position_expected);
+//	tmpVec.normalize();
+//	tmpVec*=0.3;
+//	position_expected+=tmpVec;
+//  if(std::abs(curpos.x-position_expected.x)<0.3 && std::abs(curpos.y-position_expected.y)<0.3 && std::abs(curpos.z-position_expected.z)<0.3)
+//		position_expected=curpos;
+//	std::cout << "curpos: " << position_expected;
+//	tmpVec.change(currot-rotation_expected);
+//	tmpVec.normalize();
+//	tmpVec*=0.3;
+//	rotation_expected+=tmpVec;	
+//	if(std::abs(rotation_expected.x-currot.x)<0.3 && std::abs(rotation_expected.y-currot.y)<0.3 && std::abs(rotation_expected.z-currot.z)<0.3)
+//  if(std::abs(currot.x-rotation_expected.x)<0.3 && std::abs(currot.y-rotation_expected.y)<0.3 && std::abs(currot.z-rotation_expected.z)<0.3)
+//		rotation_expected=currot; 
 
-  vector3d tmpVec(curpos);
+  std::cout << "curpos: " << curpos << "pos_exp: " << position_expected << std::endl;
+	
+  vector3d tmpVec(position_expected-curpos);
   tmpVec.normalize();
   tmpVec*=0.3;
-  if(std::abs(position_expected.x-curpos.x)<0.3 &&std::abs(position_expected.y-curpos.y)<0.3 &&std::abs(position_expected.z-curpos.z)<0.3)
+  curpos+=tmpVec;
+  if(std::abs(position_expected.x-curpos.x)<0.3 && std::abs(position_expected.y-curpos.y)<0.3 && std::abs(position_expected.z-curpos.z)<0.3)
     curpos=position_expected;
 
-  tmpVec.change(currot-rotation_expected);
+  tmpVec.change(rotation_expected-currot);
   tmpVec.normalize();
   tmpVec*=0.3;
-  if(std::abs(position_expected.x-currot.x)<0.3 &&std::abs(position_expected.y-currot.y)<0.3 &&std::abs(position_expected.z-currot.z)<0.3)
-    currot=position_expected;
+  currot+=tmpVec;
+  if(std::abs(rotation_expected.x-currot.x)<0.3 && std::abs(rotation_expected.y-currot.y)<0.3 && std::abs(rotation_expected.z-currot.z)<0.3)
+    currot=rotation_expected;
 }
 
 void weapon::show()
 {
+  test();
   glPushMatrix();
-    std::cout << "curframe: " << curframe << " frames.size(): " << frames.size() << std::endl;
+    //std::cout << "curframe: " << curframe << " frames.size(): " << frames.size() << std::endl;
     glTranslatef(curpos.x,curpos.y,curpos.z);
-    glRotatef(currot.x,1,0,0);
-    glRotatef(currot.y,0,1,0);
-    glRotatef(currot.z,0,0,1);
+    glRotatef(rotation_expected.x,1,0,0);
+    glRotatef(rotation_expected.y,0,1,0);
+    glRotatef(rotation_expected.z,0,0,1);
     //glCallList(frames[curframe]);
     if(curframe >= 0 && curframe < frames.size()) {
       glCallList(frames[curframe]);
@@ -190,13 +210,12 @@ void weapon::test()
       position_expected.x+=0.02;
     if(keys[SDLK_k])
       position_expected.z-=0.02;
-    if(keys[SDLK_k])
+    if(keys[SDLK_i])
       position_expected.z+=0.02;
-    if(keys[SDLK_k])
-      position_expected.y-=0.02;
-    if(keys[SDLK_k])
-      position_expected.y+=0.02;
-    std::cout << "line 200 position expected: " << position_expected << position_expected << std::endl;
+    if(keys[SDLK_u])
+      position_expected.y-=0.4;
+    if(keys[SDLK_o])
+      position_expected.y+=0.4;
   }
 }
 
@@ -245,3 +264,12 @@ unsigned int weapon::getOuterView()
   return outerview;
 }
 
+void weapon::setCurpos(vector3d newpos)
+{
+  curpos = newpos;
+}
+
+void weapon::setCurrot(vector3d newrot)
+{
+  currot = newrot;
+}

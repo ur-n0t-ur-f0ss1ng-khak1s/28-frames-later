@@ -10,8 +10,8 @@ game::game()
     throw std::runtime_error("SDL Initialization failed");
   }
 
-  const int SCREEN_WIDTH = 640;
-  const int SCREEN_HEIGHT = 480;
+  const int SCREEN_WIDTH = 1024;
+  const int SCREEN_HEIGHT = 768;
   const int SCREEN_BPP = 32;
 
   SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL);
@@ -45,13 +45,12 @@ game::game()
     std::cerr << "Failed to load map.obj." << std::endl;
     throw std::runtime_error("Failed to load map.obj");
   }
-  levels.push_back(std::make_unique<level>("test-level",map,mapcp,mapsp));
+  levels.push_back(level("test-level",map,mapcp,mapsp));
   std::vector<unsigned int> anim;
-  //std::vector<std::unique_ptr<weapon>> weapons;
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(weapon(anim,anim[0],1,16,19,vector3d(0.5,0,-1.44),vector3d(0,-80,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
-  player1=new player("player1",collisionsphere(vector3d(10,30,0),3.0),0.2,0.2,0.2,&weapons[0]);
+  weapons.push_back(weapon(anim,anim[0],1,16,19,vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
+  player1=new player("player1",collisionsphere(vector3d(0,0,0),3.0),0.2,0.2,0.2,&weapons[0]);
 }
 
 game::~game()
@@ -66,7 +65,6 @@ void game::start()
 	Uint32 startTime;
 	bool running=true;
 	int menuoption=0;
-  std::cout << "started the game" << std::endl;
   vector3d direction;
   bool mousebuttondown=false;
 	while(running)
@@ -121,10 +119,20 @@ void game::start()
               break;
           }
           break;
+//        case SDL_MOUSEBUTTONUP:
+//          mousebuttondown=false;
+//          player1->getCurrentWeapon()->stopfire();
+//          break;
         case SDL_MOUSEBUTTONUP:
-          mousebuttondown=false;
-          player1->getCurrentWeapon()->stopfire();
-          break;
+          switch(event.button.button)
+					{
+						case SDL_BUTTON_LEFT:
+              mousebuttondown=false;
+							player1->getCurrentWeapon()->stopfire();
+							break;
+					}
+					break;
+	 
 			}
 		}
     if(mousebuttondown)
@@ -143,20 +151,22 @@ void game::start()
 
 void game::update()
 {
+  player1->update(levels[0].getCollisionPlanes());
   for(int i=0;i<levels.size();i++)
-    levels[i]->update();
-  player1->update(levels[0]->getCollisionPlanes());
+    levels[i].update();
 }
 
 void game::show()
 {
-  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  player1->cam.Control();
-  drawSkybox(50.0);
-  player1->cam.UpdateCamera();
+  //player1->cam.Control();
+  player1->getCamera()->control();
+  drawSkybox(500.0);
+  //player1->cam.UpdateCamera();
+  player1->getCamera()->update();
   for(int i=0;i<levels.size();i++)
-    levels[i]->show();
+    levels[i].show();
   player1->show();
 }
 
@@ -208,8 +218,6 @@ void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filen
 		s+=".obj";
 		out << s << std::endl;
     int tmpobj = obj.load(s,NULL);
-    std::cout << tmpobj << std::endl;
 		anim.push_back(tmpobj);
 	}
-  std::cout << "anim size: " << anim.size() << std::endl;
 }

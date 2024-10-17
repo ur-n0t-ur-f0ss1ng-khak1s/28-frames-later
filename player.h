@@ -10,10 +10,10 @@
 #include "collisionplane.h"
 #include "collisionsphere.h"
 #include "collision.h"
-#include "camera.h"
 #include "weapon.h"
+#include "camera.h"
 
-class player{
+class player:private collision {
   std::string name;
   collisionsphere cs;
   int health;
@@ -29,7 +29,7 @@ class player{
   bool isWeapon;
   public:
     camera cam;
-    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::unique_ptr<weapon>::pointer wep);
+    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,weapon* wep);
     ~player();
     void update(std::vector<collisionplane>& collplane);
     void show();
@@ -40,6 +40,8 @@ class player{
     int getHealth();
     collisionsphere getCollisionSphere();
     int getPoints();
+    camera* getCamera();
+    weapon* getCurrentWeapon();
 
     //setters
     void setHealth(int h);
@@ -49,7 +51,6 @@ class player{
     void changeWeapon(int num);
     void changeWeaponDown();
     void changeWeaponUp();
-    weapon* getCurrentWeapon();
     void haveWeapon(bool b);
 };
 

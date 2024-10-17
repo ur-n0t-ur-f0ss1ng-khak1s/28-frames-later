@@ -1,6 +1,6 @@
 #include "player.h"
 
-player::player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::unique_ptr<weapon>::pointer wep)
+player::player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,weapon* wep)
 {
   name=n;
   cs=ccs;
@@ -38,8 +38,9 @@ void player::update(std::vector<collisionplane>& collplane)
     isground=false;
   setPosition(newpos);
 
-  if(isWeapon)
-    weapons[curweapon]->update();
+  weapons[curweapon]->setCurpos(newpos);
+  weapons[curweapon]->update();
+  //std::cout << curweapon << std::endl;
 }
 void player::show()
 {
@@ -117,4 +118,9 @@ weapon* player::getCurrentWeapon()
 void player::haveWeapon(bool b)
 {
   isWeapon=b;
+}
+
+camera* player::getCamera()
+{
+	return &cam;
 }

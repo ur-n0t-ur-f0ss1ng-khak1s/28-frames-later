@@ -62,6 +62,9 @@ class weapon{
     int getAllAmmo();
     std::string getName();
     std::vector<unsigned int>& getAnimation();
+    void setCurpos(vector3d newpos);
+    void setCurrot(vector3d newrot);
+
     bool isAimed();
     unsigned int getOuterView();
 

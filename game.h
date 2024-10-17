@@ -2,8 +2,13 @@
 #define GAME_H
 #include <SDL/SDL.h>
 #include <GL/gl.h>
+#include <SDL/SDL_mixer.h>
 #include <GL/glu.h>
+#include <vector>
+#include <string>
+#include <cstdlib>
 #include <memory>
+#include "camera.h"
 #include "objloader.h"
 #include "vector3d.h"
 #include "collisionplane.h"
@@ -15,10 +20,9 @@
 
 class game{
   objloader obj;
-  camera cam;
-  std::vector<std::unique_ptr<level>> levels;
-  std::vector<weapon> weapons;
   player* player1;
+  std::vector<level> levels;
+  std::vector<weapon> weapons;
   std::ofstream out; 
   void update();
   void show();

@@ -2,6 +2,8 @@
 
 # Check if an argument (filename) is passed
 if [ -z "$1" ]; then
+    echo "removing all files ending in .o"
+    rm -iv ./*.o
     # No argument provided, compile all .cpp files
     g++ -Wall -w -std=c++20 *.cpp -lSDL -lGL -lGLU
 
