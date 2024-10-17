@@ -13,8 +13,14 @@ class weapon{
   unsigned int normalanimation;
   unsigned int fireanimation;
   unsigned int reloadanimation;
+
+  float pitch; //direction relative to camera and player orientation
+  float yaw;
+
   vector3d position_expected;
   vector3d rotation_expected;
+
+  vector3d offset; //each weapon needs to be offset down and to the left or right from the player's view
 
   vector3d position; //when you are not aiming
   vector3d rotation;
@@ -42,7 +48,7 @@ class weapon{
   std::string name;
 
   public:
-    weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speed,const char* name,bool isa);
+    weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d ofset,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speed,const char* name,bool isa);
     ~weapon();
     void update();
     void show();
@@ -64,6 +70,7 @@ class weapon{
     std::vector<unsigned int>& getAnimation();
     void setCurpos(vector3d newpos);
     void setCurrot(vector3d newrot);
+    void setPitchAndYaw(float newpitch, float newyaw);
 
     bool isAimed();
     unsigned int getOuterView();

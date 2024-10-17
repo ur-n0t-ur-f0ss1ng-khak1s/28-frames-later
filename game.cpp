@@ -49,7 +49,7 @@ game::game()
   std::vector<unsigned int> anim;
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(weapon(anim,anim[0],1,16,19,vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
+  weapons.push_back(weapon(anim,anim[0],1,16,19,vector3d(-0.8,-1.13,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",1));
   player1=new player("player1",collisionsphere(vector3d(0,0,0),3.0),0.2,0.2,0.2,&weapons[0]);
 }
 
@@ -160,10 +160,8 @@ void game::show()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  //player1->cam.Control();
   player1->getCamera()->control();
   drawSkybox(500.0);
-  //player1->cam.UpdateCamera();
   player1->getCamera()->update();
   for(int i=0;i<levels.size();i++)
     levels[i].show();

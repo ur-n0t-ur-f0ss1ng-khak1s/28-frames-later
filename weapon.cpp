@@ -1,6 +1,6 @@
 #include "weapon.h"
 
-weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speed,const char* name,bool isa)
+weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d ofset,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speed,const char* name,bool isa)
 {
   frames=anim;
   outerview=ol;
@@ -9,6 +9,11 @@ weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,u
   fireanimation=fa;
   precision=(prec!=0 ? prec : 0.00001);
   aimprecision=(aprec!=0 ? aprec : 0.00001);
+
+  yaw=0.0;
+  pitch=0.0;
+
+  offset=ofset;
 
   position=pos;
   rotation=rot;
@@ -23,7 +28,7 @@ weapon::weapon(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,u
   name=name;
 
   position_expected=position;
-  position_expected=rotation;
+  rotation_expected=rotation;
 
   curpos=position;
   currot=rotation;
@@ -48,7 +53,6 @@ weapon::~weapon()
 
 void weapon::update()
 {
-  test();
   lastshot++;
   curframe++;
   if(curmode==1) //normal
@@ -76,37 +80,29 @@ void weapon::update()
       isreloading=false;
     }
   }
-//same as the block below but with currot and rotation_expected swapped
-//	vector3d tmpVec(curpos-position_expected);
-//	tmpVec.normalize();
-//	tmpVec*=0.3;
-//	position_expected+=tmpVec;
-//  if(std::abs(curpos.x-position_expected.x)<0.3 && std::abs(curpos.y-position_expected.y)<0.3 && std::abs(curpos.z-position_expected.z)<0.3)
-//		position_expected=curpos;
-//	std::cout << "curpos: " << position_expected;
-//	tmpVec.change(currot-rotation_expected);
-//	tmpVec.normalize();
-//	tmpVec*=0.3;
-//	rotation_expected+=tmpVec;	
-//	if(std::abs(rotation_expected.x-currot.x)<0.3 && std::abs(rotation_expected.y-currot.y)<0.3 && std::abs(rotation_expected.z-currot.z)<0.3)
-//  if(std::abs(currot.x-rotation_expected.x)<0.3 && std::abs(currot.y-rotation_expected.y)<0.3 && std::abs(currot.z-rotation_expected.z)<0.3)
-//		rotation_expected=currot; 
 
-  std::cout << "curpos: " << curpos << "pos_exp: " << position_expected << std::endl;
-	
-  vector3d tmpVec(position_expected-curpos);
-  tmpVec.normalize();
-  tmpVec*=0.3;
-  curpos+=tmpVec;
-  if(std::abs(position_expected.x-curpos.x)<0.3 && std::abs(position_expected.y-curpos.y)<0.3 && std::abs(position_expected.z-curpos.z)<0.3)
-    curpos=position_expected;
+  vector3d forwardVector = currot; 
+  vector3d rightVector(forwardVector.z, 0, -forwardVector.x);
+  rightVector.normalize();
+  curpos = curpos + forwardVector * offset.z //offset forward
+                  + rightVector * offset.x //offset to the right
+                  + vector3d(0,1,0) * offset.y; //offset slight down
 
-  tmpVec.change(rotation_expected-currot);
-  tmpVec.normalize();
-  tmpVec*=0.3;
-  currot+=tmpVec;
-  if(std::abs(rotation_expected.x-currot.x)<0.3 && std::abs(rotation_expected.y-currot.y)<0.3 && std::abs(rotation_expected.z-currot.z)<0.3)
-    currot=rotation_expected;
+//  vector3d tmpVec(position_expected-curpos);
+//  tmpVec.normalize();
+//  tmpVec*=0.3;
+//  curpos+=tmpVec;
+//  if(std::abs(position_expected.x-curpos.x)<0.3 && std::abs(position_expected.y-curpos.y)<0.3 && std::abs(position_expected.z-curpos.z)<0.3)
+//    curpos=position_expected;
+//
+//  tmpVec.change(rotation_expected-currot);
+//  tmpVec.normalize();
+//  tmpVec*=0.3;
+//  currot+=tmpVec;
+//  if(std::abs(rotation_expected.x-currot.x)<0.3 && std::abs(rotation_expected.y-currot.y)<0.3 && std::abs(rotation_expected.z-currot.z)<0.3)
+//    currot=rotation_expected;
+
+  //std::cout << "offset: " << offset << "pitch: " << pitch << "yaw: " << yaw << std::endl;
 }
 
 void weapon::show()
@@ -115,9 +111,12 @@ void weapon::show()
   glPushMatrix();
     //std::cout << "curframe: " << curframe << " frames.size(): " << frames.size() << std::endl;
     glTranslatef(curpos.x,curpos.y,curpos.z);
-    glRotatef(rotation_expected.x,1,0,0);
-    glRotatef(rotation_expected.y,0,1,0);
-    glRotatef(rotation_expected.z,0,0,1);
+    //glRotatef(pitch, 1.0f, 0.0f, 0.0f);
+    glRotatef(yaw-86.0f, 0.0f, 1.0f, 0.0f);
+    glRotatef(-pitch, 0.0f, 0.0f, 1.0f);
+//    glRotatef(rotation_expected.x,1,0,0);
+//    glRotatef(rotation_expected.y,0,1,0);
+    //glRotatef(currot.z,0,0,1);
     //glCallList(frames[curframe]);
     if(curframe >= 0 && curframe < frames.size()) {
       glCallList(frames[curframe]);
@@ -190,12 +189,13 @@ void weapon::aim()
   isaim=!isaim;
   if(isaim)
   {
-    rotation_expected=aimrotation;
-    position_expected=aimposition;
+    std::cout << "AIMING :p" << std::endl;
+    rotation_expected+=aimrotation;
+    position_expected+=aimposition;
   }else
   {
-    rotation_expected=rotation;
-    position_expected=position;
+    rotation_expected+=rotation;
+    position_expected+=position;
   }
 }
 
@@ -205,17 +205,17 @@ void weapon::test()
   {
     Uint8* keys=SDL_GetKeyState(NULL);
     if(keys[SDLK_j])
-      position_expected.x-=0.02;
-    if(keys[SDLK_l])
-      position_expected.x+=0.02;
+      offset.x-=0.2;
     if(keys[SDLK_k])
-      position_expected.z-=0.02;
-    if(keys[SDLK_i])
-      position_expected.z+=0.02;
-    if(keys[SDLK_u])
-      position_expected.y-=0.4;
+      offset.x+=0.2;
+    if(keys[SDLK_l])
+      offset.z-=0.2;
     if(keys[SDLK_o])
-      position_expected.y+=0.4;
+      offset.z+=0.2;
+    if(keys[SDLK_u])
+      offset.y-=0.01;
+    if(keys[SDLK_i])
+      offset.y+=0.01;
   }
 }
 
@@ -273,3 +273,10 @@ void weapon::setCurrot(vector3d newrot)
 {
   currot = newrot;
 }
+
+void weapon::setPitchAndYaw(float newpitch, float newyaw)
+{
+  pitch=newpitch;
+  yaw=newyaw;
+}
+

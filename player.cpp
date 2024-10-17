@@ -39,8 +39,9 @@ void player::update(std::vector<collisionplane>& collplane)
   setPosition(newpos);
 
   weapons[curweapon]->setCurpos(newpos);
+  weapons[curweapon]->setCurrot(cam.getVector());
+  weapons[curweapon]->setPitchAndYaw(cam.getCamPitch(),cam.getCamYaw());
   weapons[curweapon]->update();
-  //std::cout << curweapon << std::endl;
 }
 void player::show()
 {
