@@ -24,12 +24,12 @@ class player:private collision {
   float lookspeed;
   float energy;
   int points;
-  std::vector<weapon*> weapons;
+  std::vector<std::shared_ptr<weapon>> weapons;
   int curweapon;
   bool isWeapon;
   public:
     camera cam;
-    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,weapon* wep);
+    player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::shared_ptr<weapon> wep);
     ~player();
     void update(std::vector<collisionplane>& collplane);
     void show();
@@ -41,13 +41,13 @@ class player:private collision {
     collisionsphere getCollisionSphere();
     int getPoints();
     camera* getCamera();
-    weapon* getCurrentWeapon();
+    std::shared_ptr<weapon> getCurrentWeapon();
 
     //setters
     void setHealth(int h);
     void addPoints(int n);
 
-    void addWeapon(weapon* wep);
+    void addWeapon(std::shared_ptr<weapon> wep);
     void changeWeapon(int num);
     void changeWeaponDown();
     void changeWeaponUp();

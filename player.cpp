@@ -1,6 +1,6 @@
 #include "player.h"
 
-player::player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,weapon* wep)
+player::player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::shared_ptr<weapon> wep)
 {
   name=n;
   cs=ccs;
@@ -14,7 +14,7 @@ player::player(const char* n,collisionsphere ccs,float sprints,float normals,flo
   energy=10;
   isground=iscollision=issprint=false;
   health=100;
-  weapons.push_back(std::move(wep));
+  weapons.push_back(wep);
   curweapon=0;
   isWeapon=true;
 }
@@ -86,7 +86,7 @@ void player::addPoints(int n)
   points+=n;
 }
 
-void player::addWeapon(weapon* wep)
+void player::addWeapon(std::shared_ptr<weapon> wep)
 {
   weapons.push_back(wep);
 }
@@ -111,7 +111,7 @@ void player::changeWeaponUp()
     curweapon=0;
 }
 
-weapon* player::getCurrentWeapon()
+std::shared_ptr<weapon> player::getCurrentWeapon()
 {
   return weapons[curweapon];
 }

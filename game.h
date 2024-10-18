@@ -17,12 +17,14 @@
 #include "level.h"
 #include "player.h"
 #include "weapon.h"
+#include "zombie.h"
 
 class game{
   objloader obj;
-  player* player1;
-  std::vector<level> levels;
-  std::vector<weapon> weapons;
+  std::unique_ptr<player> player1;
+  std::vector<std::shared_ptr<level>> levels;
+  std::vector<std::shared_ptr<weapon>> weapons;
+  std::vector<std::shared_ptr<zombie>> zombies;
   std::ofstream out; 
   void update();
   void show();

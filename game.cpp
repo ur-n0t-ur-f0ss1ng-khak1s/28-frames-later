@@ -45,12 +45,15 @@ game::game()
     std::cerr << "Failed to load map.obj." << std::endl;
     throw std::runtime_error("Failed to load map.obj");
   }
-  levels.push_back(level("test-level",map,mapcp,mapsp));
+  levels.push_back(std::make_shared<level>("test-level",map,mapcp,mapsp));
   std::vector<unsigned int> anim;
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(weapon(anim,anim[0],1,16,20,vector3d(-0.8,-1.13,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",true));
-  player1=new player("player1",collisionsphere(vector3d(0,0,0),3.0),0.2,0.2,0.2,&weapons[0]);
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-0.8,-1.13,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",true));
+  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,0,0),3.0),0.2,0.2,0.2,weapons[0]);
+  anim.clear();
+  loadAnimation(anim,"data/zombie1/zombie",60);
+  zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.2,collisionsphere(vector3d(5,10,0),3.0)));
 }
 
 game::~game()
@@ -149,9 +152,19 @@ void game::start()
 
 void game::update()
 {
-  player1->update(levels[0].getCollisionPlanes());
   for(int i=0;i<levels.size();i++)
-    levels[i].update();
+    levels[i]->update();
+  player1->update(levels[0]->getCollisionPlanes());
+  for(int i=0;i<zombies.size();i++)
+    if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
+    {
+      //zombie is dead
+    }
+  for(int i=0;i<zombies.size();i++)
+    if(zombies[i]->setAttack(player1->getCollisionSphere()))
+    {
+      
+    }
 }
 
 void game::show()
@@ -162,8 +175,10 @@ void game::show()
   drawSkybox(500.0);
   player1->getCamera()->update();
   for(int i=0;i<levels.size();i++)
-    levels[i].show();
+    levels[i]->show();
   player1->show();
+  for(int i=0;i<zombies.size();i++)
+    zombies[i]->show();
 }
 
 //void game::loadAnimation(std::vector<unsigned int>& frames,std::string filename,unsigned int num)
