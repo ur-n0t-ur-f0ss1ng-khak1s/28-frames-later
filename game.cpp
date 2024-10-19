@@ -1,6 +1,4 @@
 #include "game.h"
-//#include <memory>
-#include "level.h"
 
 game::game()
 {
@@ -180,7 +178,7 @@ void game::update()
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
-      //zombie is dead
+      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,weapons[0]->getOuterView());
     }
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->setAttack(player1->getCollisionSphere()))
@@ -188,6 +186,11 @@ void game::update()
       //the zombie is attacking the player
       player1->setHealth(player1->getHealth()-zombies[i]->getStrength());
     }
+  int j=items.update(player1->getCollisionSphere());
+  if(j==0)
+  {
+    std::cout << "weapon picked up" << std::endl;
+  }
 }
 
 void game::show()
@@ -203,6 +206,7 @@ void game::show()
   player1->show();
   for(int i=0;i<zombies.size();i++)
     zombies[i]->show();
+  items.show();
 }
 
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)

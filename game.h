@@ -17,6 +17,7 @@
 #include "player.h"
 #include "weapon.h"
 #include "zombie.h"
+#include "item.h"
 
 class game{
   objloader obj;
@@ -24,6 +25,7 @@ class game{
   std::vector<std::shared_ptr<level>> levels;
   std::vector<std::shared_ptr<weapon>> weapons;
   std::vector<std::shared_ptr<zombie>> zombies;
+  item items;
   std::ofstream out; 
   void update();
   void show();
