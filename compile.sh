@@ -1,4 +1,6 @@
 #!/bin/bash
+# for debugging: g++ -g -Wall -w -std=c++20 *.cpp -lSDL -lGL -lGLU
+
 
 # Check if an argument (filename) is passed
 if [ -z "$1" ]; then
@@ -25,3 +27,4 @@ else
     fi
 fi
 
+#by yours truely, ross 

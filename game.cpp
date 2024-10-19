@@ -33,8 +33,6 @@ game::game()
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
 
-  initskybox();
-
   std::vector<collisionplane> mapcp;
   std::vector<vector3d> mapsp;
   mapsp.push_back(vector3d(3,4,5));
@@ -45,21 +43,29 @@ game::game()
     std::cerr << "Failed to load map.obj." << std::endl;
     throw std::runtime_error("Failed to load map.obj");
   }
-  levels.push_back(std::make_shared<level>("test-level",map,mapcp,mapsp));
+
+  // it's skybox time bby!
+  unsigned int left=loadTexture("data/skybox/left.bmp");
+  unsigned int back=loadTexture("data/skybox/back.bmp");
+  unsigned int right=loadTexture("data/skybox/right.bmp");
+  unsigned int front=loadTexture("data/skybox/front.bmp");
+  unsigned int top=loadTexture("data/skybox/top.bmp");
+  unsigned int bottom=loadTexture("data/skybox/bottom.bmp");
+
+  levels.push_back(std::make_shared<level>("test-level",map,mapcp,mapsp,left,back,right,front,top,bottom));
   std::vector<unsigned int> anim;
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-0.8,-1.13,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",true));
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.3,-1.63,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,30,7,300,20,"weapon1",true));
   player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,0,0),2.0),0.5,0.2,0.2,weapons[0]);
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
-  zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(5,10,0),2.0)));
+  zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
 }
 
 game::~game()
 {
   SDL_Quit();
-  killskybox();
 }
 
 void game::start()
@@ -189,7 +195,8 @@ void game::show()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
   player1->getCamera()->control();
-  drawSkybox(500.0);
+  //drawSkybox(500.0);
+  levels[0]->getSkybox()->drawSkybox();
   player1->getCamera()->update();
   for(int i=0;i<levels.size();i++)
     levels[i]->show();
@@ -198,31 +205,6 @@ void game::show()
     zombies[i]->show();
 }
 
-//void game::loadAnimation(std::vector<unsigned int>& frames,std::string filename,unsigned int num)
-//{
-//  char tmp[200];
-//  for(int i=1;i<=num;i++)
-//  {
-//    if(i<10)
-//      sprintf(tmp,"00%d",i);
-//    else if(i<100)
-//      sprintf(tmp,"00%d",i);
-//    else if(i<1000)
-//      sprintf(tmp,"%d",i);
-//    else if(i<10000)
-//      sprintf(tmp,"%d",i);
-//    else if(i<100000)
-//      sprintf(tmp,"%d",i);
-//    else if(i<1000000)
-//      sprintf(tmp,"%d",i);
-//    std::string tmp2(filename+tmp);
-//    tmp2+=".obj";
-//    std::cout << "loading " << tmp2 << std::endl;
-//    unsigned int id=obj.load(tmp2,NULL);
-//    frames.push_back(id);
-//  }
-//}
-  
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)
 {
 	char frame[8];
@@ -248,4 +230,19 @@ void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filen
     int tmpobj = obj.load(s,NULL);
 		anim.push_back(tmpobj);
 	}
+}
+
+unsigned int game::loadTexture(const char* filename)
+{
+	unsigned int num;	//the id for the texture
+	glGenTextures(1,&num);	//we generate a unique one
+	SDL_Surface* img=SDL_LoadBMP(filename);	//load the bmp image
+	glBindTexture(GL_TEXTURE_2D,num);	//and use the texture, we have just generated
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//if the texture is smaller, than the image, we get the avarege of the pixels next to it
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //same if the image bigger
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);	//we repeat the pixels in the edge of the texture, it will hide that 1px wide line at the edge of the cube, which you have seen in the video
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);	//we do it for vertically and horizontally (previous line)
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img->w,img->h,0,GL_RGB,GL_UNSIGNED_SHORT_5_6_5,img->pixels);	//we make the actual texture
+	SDL_FreeSurface(img);	//we delete the image, we don't need it anymore
+	return num;	//and we return the id
 }

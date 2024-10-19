@@ -183,14 +183,14 @@ void weapon::aim()
   isaim=!isaim;
   if(isaim)
   {
-    offset.y-=1;
-    offset.x-=1;
+    offset.y+=1;
+    offset.x+=1;
     rotation_expected+=aimrotation;
     position_expected+=aimposition;
   }else
   {
-    offset.y+=1;
-    offset.x+=1;
+    offset.y-=1;
+    offset.x-=1;
     rotation_expected+=rotation;
     position_expected+=position;
   }
