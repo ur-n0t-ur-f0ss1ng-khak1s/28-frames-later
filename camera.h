@@ -12,7 +12,7 @@ class camera{
   float camPitch,camYaw;
   float movevel;
   float mousevel;
-  bool mi;
+  bool mi,ismoved;
   void lockCamera();
   void moveCamera(float dir);
   void moveCameraUp(float dir);
@@ -35,6 +35,8 @@ class camera{
     void lookAt(float pitch,float yaw);
     void mouseIn(bool b);
     void setSpeed(float mv,float mov);
+
+    bool isMoved();
 };
 
 #endif

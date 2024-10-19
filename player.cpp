@@ -11,12 +11,13 @@ player::player(const char* n,collisionsphere ccs,float sprints,float normals,flo
   setPosition(ccs.center);
   cam.setSpeed(normalspeed,looks);
   points=0;
-  energy=10;
+  energy=50;
   isground=iscollision=issprint=false;
   health=100;
   weapons.push_back(wep);
   curweapon=0;
   isWeapon=true;
+  headPosition=0;
 }
 
 player::~player()
@@ -30,18 +31,44 @@ void player::update(std::vector<collisionplane>& collplane)
     direction+=force;
   vector3d newpos(cam.getLocation());
   newpos+=direction;
+  vector3d oldpos(newpos);
   for(int i=0;i<collplane.size();i++)
     collision::sphereplane(newpos,collplane[i].normal,collplane[i].p[0],collplane[i].p[1],collplane[i].p[2],collplane[i].p[3],cs.r);
-  if(cam.getLocation().y!=newpos.y)
+  if(oldpos.y<newpos.y)
     isground=true;
   else
     isground=false;
   setPosition(newpos);
 
-  weapons[curweapon]->setCurpos(newpos);
-  weapons[curweapon]->setCurrot(cam.getVector());
-  weapons[curweapon]->setPitchAndYaw(cam.getCamPitch(),cam.getCamYaw());
-  weapons[curweapon]->update();
+  if(isWeapon)
+  {
+    weapons[curweapon]->setCurpos(newpos);
+    weapons[curweapon]->setCurrot(cam.getVector());
+    weapons[curweapon]->setPitchAndYaw(cam.getCamPitch(),cam.getCamYaw());
+    weapons[curweapon]->update();
+  }
+
+  if(issprint)
+    energy-=0.5;
+  else if(energy<50)
+    energy+=0.05;
+  if(issprint && energy<=0.0)
+    stopSprint();
+
+  if(cam.isMoved())
+  {
+    if(headUp)
+    {
+      headPosition+=10;
+      if(headPosition>=50)
+        headUp=false;
+    }else{
+      headPosition-=10;
+      if(headPosition<=-50)
+        headUp=true;
+    }
+    cam.lookAt(cam.getCamPitch()+(float)headPosition/(150.0-issprint*100),cam.getCamYaw());
+  }
 }
 void player::show()
 {
@@ -124,4 +151,30 @@ void player::haveWeapon(bool b)
 camera* player::getCamera()
 {
 	return &cam;
+}
+
+void player::setJump()
+{
+  if(isground)
+  {
+    direction.y=1.4;
+    isground=false;
+  }
+}
+
+void player::setSprint()
+{
+  if(energy>2.0)
+  {
+    issprint=true;
+    cam.setSpeed(sprintspeed,cam.getMousevel());
+  }else{
+    issprint=false;
+  }
+}
+
+void player::stopSprint()
+{
+  issprint=false;
+  cam.setSpeed(normalspeed,cam.getMousevel());
 }

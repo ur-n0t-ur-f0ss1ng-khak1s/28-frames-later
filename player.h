@@ -27,6 +27,8 @@ class player:private collision {
   std::vector<std::shared_ptr<weapon>> weapons;
   int curweapon;
   bool isWeapon;
+  int headPosition;
+  bool headUp;
   public:
     camera cam;
     player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::shared_ptr<weapon> wep);
@@ -52,6 +54,11 @@ class player:private collision {
     void changeWeaponDown();
     void changeWeaponUp();
     void haveWeapon(bool b);
+
+    void setJump();
+
+    void setSprint();
+    void stopSprint();
 };
 
 #endif

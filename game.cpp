@@ -50,10 +50,10 @@ game::game()
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
   weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-0.8,-1.13,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,10,13,300,20,"weapon1",true));
-  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,0,0),3.0),0.2,0.2,0.2,weapons[0]);
+  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,0,0),2.0),0.5,0.2,0.2,weapons[0]);
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
-  zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.2,collisionsphere(vector3d(5,10,0),3.0)));
+  zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(5,10,0),2.0)));
 }
 
 game::~game()
@@ -88,7 +88,22 @@ void game::start()
           if(event.button.button==SDL_BUTTON_LEFT)
           {
             mousebuttondown=true;
-            player1->getCurrentWeapon()->fire(direction,player1->cam.getVector());
+            if(player1->getCurrentWeapon()->fire(direction,player1->cam.getVector()))
+            {
+              for(int i=0;i<zombies.size();i++)
+                if(collision::raysphere(
+                zombies[i]->getCollisionSphere()->center.x,
+                zombies[i]->getCollisionSphere()->center.y,
+                zombies[i]->getCollisionSphere()->center.z,
+                direction.x,direction.y,direction.z,
+                player1->getCollisionSphere().center.x,
+                player1->getCollisionSphere().center.y,
+                player1->getCollisionSphere().center.z,
+                zombies[i]->getCollisionSphere()->r))
+                {
+                  zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
+                }
+            }
           }else if(event.button.button==SDL_BUTTON_RIGHT)
           {
             player1->getCurrentWeapon()->aim();
@@ -101,11 +116,6 @@ void game::start()
           }
           break;
 				case SDL_KEYDOWN:
-          if(event.key.keysym.sym==SDLK_ESCAPE)
-          {
-            running=false;
-            break;
-          }
           switch(event.key.keysym.sym)
           {
             case SDLK_0:
@@ -120,22 +130,28 @@ void game::start()
             case SDLK_r:
               player1->getCurrentWeapon()->reload();
               break;
+            case SDLK_SPACE:
+              player1->setJump();
+              break;
+            case SDLK_LSHIFT:
+              player1->setSprint();
+              break;
+            case SDLK_ESCAPE:
+              running=false;
+              break;
           }
           break;
+        case SDL_KEYUP:
+          switch(event.key.keysym.sym)
+          {
+            case SDLK_LSHIFT:
+              player1->stopSprint();
+              break;
+          }
         case SDL_MOUSEBUTTONUP:
           mousebuttondown=false;
           player1->getCurrentWeapon()->stopfire();
           break;
-//        case SDL_MOUSEBUTTONUP:
-//          switch(event.button.button)
-//					{
-//						case SDL_BUTTON_LEFT:
-//              mousebuttondown=false;
-//							player1->getCurrentWeapon()->stopfire();
-//							break;
-//					}
-//					break;
-	 
 			}
 		}
 
@@ -163,7 +179,8 @@ void game::update()
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->setAttack(player1->getCollisionSphere()))
     {
-      
+      //the zombie is attacking the player
+      player1->setHealth(player1->getHealth()-zombies[i]->getStrength());
     }
 }
 

@@ -23,7 +23,8 @@ bool zombie::update(std::vector<collisionplane>& col,vector3d playerloc)
 
     vector3d newpos(cs.center);
     newpos.y-=0.3;
-    newpos+=direction*speed;
+    if(!isattack)
+      newpos+=direction*speed;
     for(int i=0;i<col.size();i++)
       collision::sphereplane(newpos,col[i].normal,col[i].p[0],col[i].p[1],col[i].p[2],col[i].p[3],cs.r);
     setLocation(newpos);
@@ -50,26 +51,29 @@ bool zombie::update(std::vector<collisionplane>& col,vector3d playerloc)
 
 void zombie::show()
 {
+  glEnable(GL_NORMALIZE);
   glPushMatrix();
     glTranslatef(cs.center.x,cs.center.y,cs.center.z);
-    glRotatef(rotation.x*(180.0/M_PI),1,0,0);
-    glRotatef(rotation.y*(180.0/M_PI),0,1,0);
-    glRotatef(rotation.z*(180.0/M_PI),0,0,1);
-    glScalef(1.0,1.0,1.0);
+    glRotatef(rotation.x,1,0,0);
+    glRotatef(-rotation.y*(180.0/M_PI),0,1,0);
+    glRotatef(rotation.z,0,0,1);
+    glScalef(0.6,0.6,0.6);
     glCallList(frames[curframe]);
   glPopMatrix();
+  glDisable(GL_NORMALIZE);
 }
 
 bool zombie::setAttack(collisionsphere player)
 {
-  if(collision::spheresphere(player.center,player.r,cs.center,cs.r))
+  if(!isdead && collision::spheresphere(player.center,player.r,cs.center,cs.r))
   {
     isattack=true;
     iswalk=false;
     return 1;
   }else{
     isattack=false;
-    iswalk=true;
+    if(!isdead)
+      iswalk=true;
     return 0;
   }
 }

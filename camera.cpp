@@ -31,7 +31,7 @@ camera::camera()
   camYaw=0;
   movevel=0.2;
   mousevel=0.2;
-  mi=false;
+  mi=ismoved=false;
 }
 
 camera::camera(vector3d l)
@@ -41,7 +41,7 @@ camera::camera(vector3d l)
   camYaw=0;
   movevel=0.2;
   mousevel=0.2;
-  mi=false;
+  mi=ismoved=false;
 }
 
 camera::camera(vector3d loc,float yaw,float pitch)
@@ -51,7 +51,7 @@ camera::camera(vector3d loc,float yaw,float pitch)
   camYaw=yaw;
   movevel=0.2;
   mousevel=0.2;
-  mi=false; 
+  mi=ismoved=false;
 }
 
 camera::camera(vector3d loc,float yaw,float pitch,float mv,float mov)
@@ -61,7 +61,7 @@ camera::camera(vector3d loc,float yaw,float pitch,float mv,float mov)
   camYaw=yaw;
   movevel=mv;
   mousevel=mov;
-  mi=false; 
+  mi=ismoved=false;
 }
 
 void camera::control()
@@ -78,21 +78,30 @@ void camera::control()
 		lockCamera();
 		SDL_WarpMouse(MidX,MidY);
 		Uint8* state=SDL_GetKeyState(NULL);
+    ismoved=false;
 		if(state[SDLK_w])
 		{
+      ismoved=true;
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(0.0);
 			//moveCameraUp(0.0);
 		}else if(state[SDLK_s])
 		{
+      ismoved=true;
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(180.0);
 			//moveCameraUp(180.0);
 		}		
 		if(state[SDLK_a])
+    {
+      ismoved=true;
 			moveCamera(90.0);
+    }
 		else if(state[SDLK_d])
+    {
+      ismoved=true;
 			moveCamera(270);	
+    }
 	}
 	glRotatef(-camPitch,1.0,0.0,0.0);
 	glRotatef(-camYaw,0.0,1.0,0.0);
@@ -159,4 +168,9 @@ void camera::setSpeed(float mv,float mov)
 {
   movevel=mv;
   mousevel=mov;
+}
+
+bool camera::isMoved()
+{
+  return ismoved;
 }
