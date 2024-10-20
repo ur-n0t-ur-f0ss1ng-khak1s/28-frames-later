@@ -181,12 +181,13 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 			tmp.push_back(c);
 		}
 		char name[200];
-    std::string filename;
+    char filename[200];
 		float amb[3],dif[3],spec[3],alpha,ns,ni;
 		int illum;
 		unsigned int texture;
 		bool ismat=false;
-    filename = "\0";
+    strcpy(filename,"\0");
+    //filename = "\0";
 		//std::cout << tmp.size() << std::endl;
 		for(int i=0;i<tmp.size();i++)
 		{
@@ -196,10 +197,11 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 			{
 				if(ismat)
 				{
-					if(strcmp(filename.c_str(),"\0")!=0 && strcmp(filename.c_str(),"collision")!=0)
+					if(strcmp(filename,"\0")!=0 && strcmp(filename,"collision")!=0)
 					{
 						materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,texture));
-            filename = "\0";
+            strcpy(filename,"\0");
+            //filename = "\0";
 					}else{
 							materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,-1));				
 					}
@@ -237,14 +239,14 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 				ismat=true;
 			}else if(tmp[i][0]=='m' && tmp[i][1]=='a')
 			{
-				sscanf(tmp[i].c_str(),"map_Kd %s",filename.c_str());
+				sscanf(tmp[i].c_str(),"map_Kd %s",filename);
 				bool l=0;
-				out << "Opening image: " << filename.c_str() << std::endl;
-				std::string filename2=path+filename.c_str();
+				out << "Opening image: " << filename << std::endl;
+				std::string filename2=path+filename;
 				for(int i=0;i<loadedTextures.size();i++)
-					if(loadedTextures[i]==filename2.c_str())
+					if(loadedTextures[i]==filename2)
 					{
-						out << "loading "  << filename2.c_str() << std::endl;
+						out << "loading "  << filename2 << std::endl;
 						texture=loadedTexturesNum[i];
 						l=1;
 						break;
@@ -256,7 +258,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		}
 				if(ismat)
 				{
-					if(strcmp(filename.c_str(),"\0")!=0)
+					if(strcmp(filename,"\0")!=0)
 					{
 						materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,texture));
 					}else{
@@ -298,8 +300,11 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 			last=faces[i]->mat;
 			out << "1....." << std::endl;
 			if(materials[faces[i]->mat]->texture==-1)
-				glDisable(GL_TEXTURE_2D);
-			else{
+      {
+				//glDisable(GL_TEXTURE_2D);
+				glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
+      }else{
 				glEnable(GL_TEXTURE_2D);
 				glBindTexture(GL_TEXTURE_2D,materials[faces[i]->mat]->texture);
 			}

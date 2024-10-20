@@ -34,6 +34,10 @@ game::game()
 //  std::vector<collisionplane> goApCp;
 //  goldenApple=obj.load("data/golden-apple/golden-apple.obj",&goApCp);
   loadAnimation(goldenApples, "data/golden-apple/golden-apple", 1);
+    std::vector<collisionplane> tegrco;
+    testgreen=obj.load("data/testgreen/testgreen.obj",&tegrco);
+    items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(0,0,0),2.0),0,testgreen);
+
 
   std::vector<collisionplane> mapcp;
   std::vector<vector3d> mapsp;
@@ -58,7 +62,7 @@ game::game()
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
   weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.3,-1.63,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,30,7,300,20,"weapon1",true));
-  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,0,0),2.0),0.5,0.2,0.2,weapons[0]);
+  player1=std::make_unique<player>("player1",collisionsphere(vector3d(20,20,0),2.0),0.5,0.2,0.2,weapons[0]);
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
@@ -183,6 +187,7 @@ void game::update()
     {
       //zombie died logic:
       items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,goldenApples[0]);
+      
 //      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,weapons[0]->getOuterView());
     }
   for(int i=0;i<zombies.size();i++)

@@ -27,6 +27,7 @@ class game{
   std::vector<std::shared_ptr<weapon>> weapons;
   std::vector<std::shared_ptr<zombie>> zombies;
   std::vector<unsigned int> goldenApples;
+  unsigned int testgreen;
   item items;
   //unsigned int goldenApple;
 

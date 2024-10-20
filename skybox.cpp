@@ -26,9 +26,11 @@ skybox::~skybox()
 void skybox::drawSkybox()
 {
 	bool b1=glIsEnabled(GL_TEXTURE_2D);	//new, we left the textures turned on, if it was turned on
+  bool b2=glIsEnabled(GL_LIGHTING);
 	glDisable(GL_LIGHTING);	//turn off lighting, when making the skybox
 	glDisable(GL_DEPTH_TEST);	//turn off depth texting
 	glEnable(GL_TEXTURE_2D);	//and turn on texturing
+  glColor3f(1,1,1);
 	glBindTexture(GL_TEXTURE_2D,side[1]);	//use the texture we want
 	glBegin(GL_QUADS);	//and draw a face
 		//back face
@@ -100,9 +102,10 @@ void skybox::drawSkybox()
 		glTexCoord2f(1,0);
 		glVertex3f(size/2,-size/2,-size/2);
 	glEnd();
-	glEnable(GL_LIGHTING);	//turn everything back, which we turned on, and turn everything off, which we have turned on.
 	glEnable(GL_DEPTH_TEST);
 	if(!b1)
 		glDisable(GL_TEXTURE_2D);
+  if(b2)
+    glEnable(GL_LIGHTING);	//turn everything back, which we turned on, and turn everything off, which we have turned on.
 
 }
