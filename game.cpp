@@ -31,10 +31,13 @@ game::game()
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
 
+//  std::vector<collisionplane> goApCp;
+//  goldenApple=obj.load("data/golden-apple/golden-apple.obj",&goApCp);
+  loadAnimation(goldenApples, "data/golden-apple/golden-apple", 1);
+
   std::vector<collisionplane> mapcp;
   std::vector<vector3d> mapsp;
   mapsp.push_back(vector3d(3,4,5));
-
   unsigned int map=obj.load("map.obj",&mapcp);
 
   if (map == 0) {
@@ -178,7 +181,9 @@ void game::update()
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
-      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,weapons[0]->getOuterView());
+      //zombie died logic:
+      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,goldenApples[0]);
+//      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,weapons[0]->getOuterView());
     }
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->setAttack(player1->getCollisionSphere()))
@@ -207,6 +212,10 @@ void game::show()
   for(int i=0;i<zombies.size();i++)
     zombies[i]->show();
   items.show();
+//    glPushMatrix();
+//      glTranslatef(0,0,0);
+//      glCallList(goldenApple);
+//    glPopMatrix();
 }
 
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)

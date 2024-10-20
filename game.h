@@ -20,17 +20,21 @@
 #include "item.h"
 
 class game{
+  std::ofstream out; 
   objloader obj;
   std::unique_ptr<player> player1;
   std::vector<std::shared_ptr<level>> levels;
   std::vector<std::shared_ptr<weapon>> weapons;
   std::vector<std::shared_ptr<zombie>> zombies;
+  std::vector<unsigned int> goldenApples;
   item items;
-  std::ofstream out; 
+  //unsigned int goldenApple;
+
   void update();
   void show();
   unsigned int loadTexture(const char* filename);
   void loadAnimation(std::vector<unsigned int>& anim,std::string filename,int frames);
+
   public:
     game();
     ~game();

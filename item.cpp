@@ -45,6 +45,7 @@ int item::update(collisionsphere playerpos)
 
 void item::show()
 {
+  glEnable(GL_NORMALIZE);
   for(int i=0;i<items.size();i++)
   {
     glPushMatrix();
@@ -54,6 +55,8 @@ void item::show()
       glRotatef(items[i].rotation.z,0,0,1);
       glScalef(items[i].scale.x,items[i].scale.y,items[i].scale.z);
       glCallList(items[i].mesh);
+      glLoadIdentity();
     glPopMatrix();
   }
+  glDisable(GL_NORMALIZE);
 }
