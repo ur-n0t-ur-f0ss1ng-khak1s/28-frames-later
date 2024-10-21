@@ -8,11 +8,9 @@ game::game()
     throw std::runtime_error("SDL Initialization failed");
   }
 
-  const int SCREEN_WIDTH = 1024;
-  const int SCREEN_HEIGHT = 768;
   const int SCREEN_BPP = 32;
 
-  SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL|SDL_FULLSCREEN);
+  SDL_Surface* screen = SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL|SDL_FULLSCREEN);
   if (!screen) {
     std::cerr << "SDL SetVideoMode failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("Failed to set video mode");
@@ -21,7 +19,7 @@ game::game()
   glClearColor(0.5,0.5,0.5,1.0);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45, static_cast<double>(SCREEN_WIDTH) / SCREEN_HEIGHT, 1.0, 500.0);
+  gluPerspective(45, static_cast<double>(screenWidth) / screenHeight, 1.0, 500.0);
 
   GLenum err = glGetError();
   if (err != GL_NO_ERROR) {
@@ -36,7 +34,7 @@ game::game()
   loadAnimation(goldenApples, "data/golden-apple/golden-apple", 1);
     std::vector<collisionplane> tegrco;
     testgreen=obj.load("data/testgreen/testgreen.obj",&tegrco);
-    items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(0,0,0),2.0),0,testgreen);
+    items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(30,2,20),2.0),0,testgreen);
 
 
   std::vector<collisionplane> mapcp;
@@ -64,7 +62,7 @@ game::game()
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
   weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.3,-1.63,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,30,7,300,20,"weapon1",true));
-  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,0,0),2.0),0.5,0.2,0.2,weapons[0]);
+  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[0]);
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
@@ -219,10 +217,7 @@ void game::show()
   for(int i=0;i<zombies.size();i++)
     zombies[i]->show();
   items.show();
-//    glPushMatrix();
-//      glTranslatef(0,0,0);
-//      glCallList(goldenApple);
-//    glPopMatrix();
+  renderCrosshair();
 }
 
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)
@@ -265,4 +260,44 @@ unsigned int game::loadTexture(const char* filename)
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img->w,img->h,0,GL_RGB,GL_UNSIGNED_SHORT_5_6_5,img->pixels);	//we make the actual texture
 	SDL_FreeSurface(img);	//we delete the image, we don't need it anymore
 	return num;	//and we return the id
+}
+
+//renderCrosshair is courtesy of chatGPT :)
+void game::renderCrosshair() {
+    // Switch to 2D rendering (orthographic projection)
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    
+    // Set up orthographic projection (for 2D rendering)
+    gluOrtho2D(0, screenWidth, 0, screenHeight);
+    
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // Disable depth testing and lighting for 2D rendering
+    //glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_LIGHTING);
+
+    // Set the color of the dot (white)
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    // Enable point size control 5.0f is size of the dot
+    glPointSize(5.0f);
+
+    // Draw the dot at the center of the screen
+    glBegin(GL_POINTS);
+        glVertex2f(screenWidth / 2.0f, screenHeight / 2.0f);
+    glEnd();
+
+    // Re-enable depth testing and lighting (for 3D rendering)
+    //glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_LIGHTING);
+
+    // Restore original projection and modelview matrices
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }

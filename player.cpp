@@ -36,8 +36,11 @@ void player::update(std::vector<collisionplane>& collplane)
     collision::sphereplane(newpos,collplane[i].normal,collplane[i].p[0],collplane[i].p[1],collplane[i].p[2],collplane[i].p[3],cs.r);
   if(oldpos.y<newpos.y)
     isground=true;
-  else
-    isground=false;
+  if(newpos.y<-2)
+  {
+    newpos.y = -1;
+    std::cout << newpos.y << std::endl;
+  }
   setPosition(newpos);
 
   if(isWeapon)
@@ -70,11 +73,13 @@ void player::update(std::vector<collisionplane>& collplane)
     cam.lookAt(cam.getCamPitch()+(float)headPosition/(150.0-issprint*100),cam.getCamYaw());
   }
 }
+
 void player::show()
 {
   if(isWeapon)
     weapons[curweapon]->show();
 }
+
 void player::setPosition(vector3d pos)
 {
   cs.center=pos;

@@ -27,6 +27,8 @@ class game{
   std::vector<std::shared_ptr<weapon>> weapons;
   std::vector<std::shared_ptr<zombie>> zombies;
   std::vector<unsigned int> goldenApples;
+  int screenWidth = 1024;
+  int screenHeight = 768;
   unsigned int testgreen;
   item items;
   //unsigned int goldenApple;
@@ -35,6 +37,7 @@ class game{
   void show();
   unsigned int loadTexture(const char* filename);
   void loadAnimation(std::vector<unsigned int>& anim,std::string filename,int frames);
+  void renderCrosshair();
 
   public:
     game();
