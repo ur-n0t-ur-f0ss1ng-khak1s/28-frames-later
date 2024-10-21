@@ -12,7 +12,7 @@ game::game()
   const int SCREEN_HEIGHT = 768;
   const int SCREEN_BPP = 32;
 
-  SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL);
+  SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL|SDL_FULLSCREEN);
   if (!screen) {
     std::cerr << "SDL SetVideoMode failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("Failed to set video mode");
@@ -42,7 +42,9 @@ game::game()
   std::vector<collisionplane> mapcp;
   std::vector<vector3d> mapsp;
   mapsp.push_back(vector3d(3,4,5));
-  unsigned int map=obj.load("map.obj",&mapcp);
+  //unsigned int map=obj.load("map.obj",&mapcp);
+  //unsigned int map=obj.load("collision-test.obj",&mapcp);
+  unsigned int map=obj.load("data/egypt/egypt.obj",&mapcp);
 
   if (map == 0) {
     std::cerr << "Failed to load map.obj." << std::endl;
@@ -62,7 +64,7 @@ game::game()
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
   weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.3,-1.63,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,30,7,300,20,"weapon1",true));
-  player1=std::make_unique<player>("player1",collisionsphere(vector3d(20,20,0),2.0),0.5,0.2,0.2,weapons[0]);
+  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,0,0),2.0),0.5,0.2,0.2,weapons[0]);
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
