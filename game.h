@@ -1,8 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <GL/gl.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include <GL/glu.h>
 #include <vector>
 #include <string>
@@ -18,6 +18,7 @@
 #include "weapon.h"
 #include "zombie.h"
 #include "item.h"
+#include "text.h"
 
 class game{
   std::ofstream out; 
@@ -31,6 +32,8 @@ class game{
   int screenHeight = 768;
   unsigned int testgreen;
   item items;
+  std::shared_ptr<text> tex;
+  SDL_Window* window;
   //unsigned int goldenApple;
 
   void update();
@@ -38,6 +41,8 @@ class game{
   unsigned int loadTexture(const char* filename);
   void loadAnimation(std::vector<unsigned int>& anim,std::string filename,int frames);
   void renderCrosshair();
+  void drawMenu(int health,int ammo,int allammo,int point,const std::string& weaponName);
+
 
   public:
     game();

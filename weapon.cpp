@@ -200,7 +200,7 @@ void weapon::test()
 {
   if(istest)
   {
-    Uint8* keys=SDL_GetKeyState(NULL);
+    const Uint8* keys=SDL_GetKeyboardState(NULL);
     if(keys[SDLK_j])
       offset.x-=0.2;
     if(keys[SDLK_k])

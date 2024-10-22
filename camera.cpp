@@ -64,7 +64,7 @@ camera::camera(vector3d loc,float yaw,float pitch,float mv,float mov)
   mi=ismoved=false;
 }
 
-void camera::control()
+void camera::control(SDL_Window* win)
 {
 	if(mi)
 	{
@@ -76,8 +76,8 @@ void camera::control()
 		camYaw+=mousevel*(MidX-tmpx);
 		camPitch+=mousevel*(MidY-tmpy);
 		lockCamera();
-		SDL_WarpMouse(MidX,MidY);
-		Uint8* state=SDL_GetKeyState(NULL);
+		SDL_WarpMouseInWindow(win,MidX,MidY);
+		const Uint8* state=SDL_GetKeyboardState(NULL);
     ismoved=false;
 		if(state[SDLK_w])
 		{

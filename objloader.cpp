@@ -438,19 +438,42 @@ objloader::~objloader()
 
 unsigned int objloader::loadTexture(const char* filename)
 {
-	unsigned int num;
-	glGenTextures(1,&num);
-	SDL_Surface* img=SDL_LoadBMP(filename);
-	glBindTexture(GL_TEXTURE_2D,num);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img->w,img->h,0,GL_RGB,GL_UNSIGNED_SHORT_5_6_5,img->pixels);
-	glTexEnvi(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-	SDL_FreeSurface(img);
-	texture.push_back(num);
-	loadedTextures.push_back(filename);
-	loadedTexturesNum.push_back(num);
-	return num;
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    // Load the image using SDL2_image
+    SDL_Surface* img = IMG_Load(filename);
+    if (!img) {
+        // Handle the error (e.g., log it)
+        return 0; // or any other error value you prefer
+    }
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Convert the surface pixels to the appropriate format
+    GLenum format;
+    if (img->format->BytesPerPixel == 3) {
+        format = GL_RGB;
+    } else if (img->format->BytesPerPixel == 4) {
+        format = GL_RGBA;
+    } else {
+        // Handle unexpected pixel format
+        SDL_FreeSurface(img);
+        return 0; // or any other error value you prefer
+    }
+
+    // Upload the texture data to OpenGL
+    glTexImage2D(GL_TEXTURE_2D, 0, format, img->w, img->h, 0, format, GL_UNSIGNED_BYTE, img->pixels);
+    glTexEnvi(GL_TEXTURE_2D, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+    SDL_FreeSurface(img);
+
+    texture.push_back(textureID);
+    loadedTextures.push_back(filename);
+    loadedTexturesNum.push_back(textureID);
+    return textureID;
 }
 
 objloader::objloader()

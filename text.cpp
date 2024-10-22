@@ -57,6 +57,7 @@ void text::drawText(vector3d pos,vector3d rot,vector3d scale,const char* tex)
   }
   glPopMatrix();
   if(b1)
+    std::cout << ":-p" << std::endl;
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -74,19 +75,19 @@ void text::setTest(bool b)
 
 void text::test(vector3d& pos,vector3d& rot,vector3d& scale)
 {
-  Uint8* key=SDL_GetKeyState(NULL);
+  const Uint8* key=SDL_GetKeyboardState(NULL);
   if(key[SDLK_f])
     pos.x-=0.01;
   else if(key[SDLK_h])
-    pox.x+=0.01;
+    pos.x+=0.01;
   else if(key[SDLK_t])
-    pox.y+=0.01;
+    pos.y+=0.01;
   else if(key[SDLK_g])
-    pox.y-=0.01;
+    pos.y-=0.01;
   else if(key[SDLK_z])
-    pox.z-=0.01;
+    pos.z-=0.01;
   else if(key[SDLK_u])
-    pox.z+=0.01;
+    pos.z+=0.01;
   else if(key[SDLK_x])
   {
     scale.x+=0.005;

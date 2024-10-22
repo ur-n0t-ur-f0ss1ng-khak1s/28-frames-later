@@ -1,6 +1,6 @@
 #ifndef LEVEL_H
 #define LEVEL_H
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <vector>

@@ -3,7 +3,7 @@
 #include "vector3d.h"
 #include <cmath>
 #include <iostream>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -21,7 +21,7 @@ class camera{
     camera(vector3d loc);
     camera(vector3d loc,float yaw,float pitch);
     camera(vector3d loc,float yaw,float pitch,float mv,float mov);
-    void control();
+    void control(SDL_Window* win);
     void update();
     vector3d getVector();
     vector3d getLocation();

@@ -8,10 +8,11 @@ game::game()
     throw std::runtime_error("SDL Initialization failed");
   }
 
-  const int SCREEN_BPP = 32;
+  //const int SCREEN_BPP = 32;
+  window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL);
 
-  SDL_Surface* screen = SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL|SDL_FULLSCREEN);
-  if (!screen) {
+  //SDL_Surface* screen = SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL|SDL_FULLSCREEN);
+  if (!window) {
     std::cerr << "SDL SetVideoMode failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("Failed to set video mode");
   }
@@ -118,10 +119,10 @@ void game::start()
           }else if(event.button.button==SDL_BUTTON_RIGHT)
           {
             player1->getCurrentWeapon()->aim();
-          }else if(event.button.button==SDL_BUTTON_WHEELUP)
+          }else if(event.button.button==SDL_MOUSEWHEEL && event.wheel.y > 0)
           {
             player1->changeWeaponUp();
-          }else if(event.button.button==SDL_BUTTON_WHEELDOWN)
+          }else if(event.button.button==SDL_MOUSEWHEEL && event.wheel.y < 0)
           {
             player1->changeWeaponDown();
           }
@@ -170,7 +171,7 @@ void game::start()
 
 		show();
 
-		SDL_GL_SwapBuffers();
+		SDL_GL_SwapWindow(window);
     int FPS=60;
 		if(1000/FPS>(SDL_GetTicks()-startTime))
 			SDL_Delay(1000/FPS-(SDL_GetTicks()-startTime));
@@ -207,8 +208,7 @@ void game::show()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  player1->getCamera()->control();
-  //drawSkybox(500.0);
+  player1->getCamera()->control(window);
   levels[0]->getSkybox()->drawSkybox();
   player1->getCamera()->update();
   for(int i=0;i<levels.size();i++)
@@ -218,6 +218,7 @@ void game::show()
     zombies[i]->show();
   items.show();
   renderCrosshair();
+  //drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
 }
 
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)
@@ -225,7 +226,7 @@ void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filen
 	char frame[8];
 	char tmp[7];
   std::cout << "frames: " << frames << std::endl;
-  frames = 38;
+  frames = frames;
 	for(int i=1;i<=frames;i++)
 	{
 		std::string s(filename); //string misformatting here will cause a segfault 
@@ -249,17 +250,28 @@ void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filen
 
 unsigned int game::loadTexture(const char* filename)
 {
-	unsigned int num;	//the id for the texture
-	glGenTextures(1,&num);	//we generate a unique one
-	SDL_Surface* img=SDL_LoadBMP(filename);	//load the bmp image
-	glBindTexture(GL_TEXTURE_2D,num);	//and use the texture, we have just generated
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//if the texture is smaller, than the image, we get the avarege of the pixels next to it
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //same if the image bigger
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);	//we repeat the pixels in the edge of the texture, it will hide that 1px wide line at the edge of the cube, which you have seen in the video
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);	//we do it for vertically and horizontally (previous line)
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img->w,img->h,0,GL_RGB,GL_UNSIGNED_SHORT_5_6_5,img->pixels);	//we make the actual texture
-	SDL_FreeSurface(img);	//we delete the image, we don't need it anymore
-	return num;	//and we return the id
+  unsigned int num; // The ID for the texture
+  glGenTextures(1, &num); // Generate a unique texture ID
+
+  // Load the image using SDL_image
+  SDL_Surface* img = IMG_Load(filename); // Use IMG_Load instead of SDL_LoadBMP for multiple formats
+  if (!img) {
+      // Handle error (e.g., log the error message)
+      std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
+      return 0; // Return 0 to indicate failure
+  }
+
+  glBindTexture(GL_TEXTURE_2D, num); // Use the generated texture ID
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Set texture min filter
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Set texture mag filter
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Clamp to edge for horizontal
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Clamp to edge for vertical
+
+  // Use SDL2 to create the actual texture
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->w, img->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img->pixels); // Use GL_RGBA for more color depth
+
+  SDL_FreeSurface(img); // Free the surface as it's no longer needed
+  return num; // Return the texture ID
 }
 
 //renderCrosshair is courtesy of chatGPT :)
@@ -301,3 +313,16 @@ void game::renderCrosshair() {
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 }
+
+void game::drawMenu(int health,int ammo,int allammo,int point,const std::string& weaponName)
+{
+  char tmp[200];
+  sprintf(tmp,"health: %d",health);
+  tex->drawText(vector3d(-0.5,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
+  sprintf(tmp,"%s    %d / %d",weaponName.c_str(),ammo,allammo);
+  tex->drawText(vector3d(-0.54,-0.39,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
+  sprintf(tmp,"Points: %d",point);
+  tex->drawText(vector3d(0.22,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
+}
+
+
