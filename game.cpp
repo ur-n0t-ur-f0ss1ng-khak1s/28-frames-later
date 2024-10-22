@@ -3,18 +3,24 @@
 game::game()
 {
   out.open("report.txt");
-  if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL Initialization failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("SDL Initialization failed");
   }
 
-  //const int SCREEN_BPP = 32;
   window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL);
 
   //SDL_Surface* screen = SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL|SDL_FULLSCREEN);
   if (!window) {
     std::cerr << "SDL SetVideoMode failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("Failed to set video mode");
+  }
+
+  // Create an OpenGL context
+  SDL_GLContext glContext = SDL_GL_CreateContext(window);
+  if (!glContext) {
+    std::cerr << "OpenGL context could not be created: " << SDL_GetError() << std::endl;
+    throw std::runtime_error("Failed to create OpenGL context");
   }
 
   glClearColor(0.5,0.5,0.5,1.0);
@@ -35,6 +41,10 @@ game::game()
   loadAnimation(goldenApples, "data/golden-apple/golden-apple", 1);
     std::vector<collisionplane> tegrco;
     testgreen=obj.load("data/testgreen/testgreen.obj",&tegrco);
+    if (testgreen == 0)
+    {
+      std::cerr << "failed to load testgreen" << std::endl;
+    }
     items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(30,2,20),2.0),0,testgreen);
 
 

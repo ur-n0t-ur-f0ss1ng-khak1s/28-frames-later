@@ -68,9 +68,9 @@ class objloader{
 	std::vector<int> loadedTexturesNum;
 	std::ofstream out;
 	public:
-	objloader();
-	~objloader();
-	int load(const std::string& filename,std::vector<collisionplane>* collisionplane);
+    objloader();
+    ~objloader();
+    int load(const std::string& filename,std::vector<collisionplane>* collisionplane);
 };
 
 #endif

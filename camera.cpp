@@ -79,25 +79,25 @@ void camera::control(SDL_Window* win)
 		SDL_WarpMouseInWindow(win,MidX,MidY);
 		const Uint8* state=SDL_GetKeyboardState(NULL);
     ismoved=false;
-		if(state[SDLK_w])
+		if(state[SDL_SCANCODE_W])
 		{
       ismoved=true;
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(0.0);
 			//moveCameraUp(0.0);
-		}else if(state[SDLK_s])
+		}else if(state[SDL_SCANCODE_S])
 		{
       ismoved=true;
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(180.0);
 			//moveCameraUp(180.0);
 		}		
-		if(state[SDLK_a])
+		if(state[SDL_SCANCODE_A])
     {
       ismoved=true;
 			moveCamera(90.0);
     }
-		else if(state[SDLK_d])
+		else if(state[SDL_SCANCODE_D])
     {
       ismoved=true;
 			moveCamera(270);	

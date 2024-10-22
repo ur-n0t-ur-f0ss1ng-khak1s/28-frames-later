@@ -283,6 +283,9 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		smoothnormals();
 	int num;
 	num=glGenLists(1);
+  if (num == 0) {
+    std::cout << "Failed to generate OpenGL display list" << std::endl;
+  }
 	glNewList(num,GL_COMPILE);
 	int last=-1;
 	for(int i=0;i<faces.size();i++)
@@ -445,6 +448,7 @@ unsigned int objloader::loadTexture(const char* filename)
     SDL_Surface* img = IMG_Load(filename);
     if (!img) {
         // Handle the error (e.g., log it)
+      std::cout << "error in loadTexture line 448" << SDL_GetError() << std::endl;
         return 0; // or any other error value you prefer
     }
 
@@ -459,6 +463,7 @@ unsigned int objloader::loadTexture(const char* filename)
     } else if (img->format->BytesPerPixel == 4) {
         format = GL_RGBA;
     } else {
+        std::cout << "error in loadTexture line 463" << std::endl;
         // Handle unexpected pixel format
         SDL_FreeSurface(img);
         return 0; // or any other error value you prefer

@@ -1,4 +1,7 @@
 # he-that-hath-no-sword-let-him-sell-his-garment-and-buy-one
+todo:
+upgrade from SDL to SDL2
+use SDL2 to render text for a menu/HUD
 
 based off of "FPS game (C++, OpenGL, SDL)" on youtube by "thecplusplusguy" 
 tutorial playlist: https://youtube.com/playlist?list=PLA850388B1C9C62A6&si=vKluvRxL3d5AJ3Hj
