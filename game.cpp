@@ -7,14 +7,15 @@ game::game()
     std::cerr << "SDL Initialization failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("SDL Initialization failed");
   }
-
+  if (TTF_Init() == -1) {
+    std::cerr << "TTF_Init failed: " << TTF_GetError() << std::endl;
+  }
   window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL);
-
-  //SDL_Surface* screen = SDL_SetVideoMode(screenWidth, screenHeight, SCREEN_BPP, SDL_SWSURFACE | SDL_OPENGL|SDL_FULLSCREEN);
   if (!window) {
     std::cerr << "SDL SetVideoMode failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("Failed to set video mode");
   }
+  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); //we need an SDL renderer for fonts and text rendering
 
   // Create an OpenGL context
   SDL_GLContext glContext = SDL_GL_CreateContext(window);
@@ -39,13 +40,13 @@ game::game()
 //  std::vector<collisionplane> goApCp;
 //  goldenApple=obj.load("data/golden-apple/golden-apple.obj",&goApCp);
   loadAnimation(goldenApples, "data/golden-apple/golden-apple", 1);
-    std::vector<collisionplane> tegrco;
-    testgreen=obj.load("data/testgreen/testgreen.obj",&tegrco);
-    if (testgreen == 0)
-    {
-      std::cerr << "failed to load testgreen" << std::endl;
-    }
-    items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(30,2,20),2.0),0,testgreen);
+  std::vector<collisionplane> tegrco;
+  testgreen=obj.load("data/testgreen/testgreen.obj",&tegrco);
+  if (testgreen == 0)
+  {
+    std::cerr << "failed to load testgreen" << std::endl;
+  }
+  items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(30,2,20),2.0),0,testgreen);
 
 
   std::vector<collisionplane> mapcp;
@@ -77,10 +78,23 @@ game::game()
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
+
+  // it's font time bby!
+  fonts.push_back(TTF_OpenFont("ttf/Hack-Regular.ttf",24));
+  fonts.push_back(TTF_OpenFont("ttf/Hack-Bold.ttf",24));
+  fonts.push_back(TTF_OpenFont("ttf/Hack-Italic.ttf",24));
+  fonts.push_back(TTF_OpenFont("ttf/Hack-BoldItalic.ttf",24));
 }
 
 game::~game()
 {
+  for(int i=0;i<fonts.size();i++)
+  {
+    TTF_CloseFont(fonts[i]);
+  }
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  TTF_Quit();
   SDL_Quit();
 }
 
@@ -180,6 +194,18 @@ void game::start()
 		update();
 
 		show();
+    
+    char tmp[200];
+    sprintf(tmp,"health: %d",player1->getHealth());
+    SDL_Color textColor = {255, 255, 255};
+    SDL_Surface* textSurface = TTF_RenderText_Solid(fonts[0], "XXXXXXXXXX", textColor);
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_Rect textRect = {50, 50, textSurface->w, textSurface->h};
+    SDL_FreeSurface(textSurface);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+    SDL_RenderPresent(renderer);
+    SDL_DestroyTexture(textTexture);
 
 		SDL_GL_SwapWindow(window);
     int FPS=60;
@@ -326,11 +352,12 @@ void game::drawMenu(int health,int ammo,int allammo,int point,const std::string&
 {
   char tmp[200];
   sprintf(tmp,"health: %d",health);
-  tex->drawText(vector3d(-0.5,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
-  sprintf(tmp,"%s    %d / %d",weaponName.c_str(),ammo,allammo);
-  tex->drawText(vector3d(-0.54,-0.39,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
-  sprintf(tmp,"Points: %d",point);
-  tex->drawText(vector3d(0.22,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
+  tex->sdlDrawText(renderer,fonts[0],0,0,tmp);
+//  tex->drawText(vector3d(-0.5,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
+//  sprintf(tmp,"%s    %d / %d",weaponName.c_str(),ammo,allammo);
+//  tex->drawText(vector3d(-0.54,-0.39,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
+//  sprintf(tmp,"Points: %d",point);
+//  tex->drawText(vector3d(0.22,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
 }
 
 

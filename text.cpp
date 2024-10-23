@@ -1,5 +1,37 @@
 #include "text.h"
 
+void text::sdlDrawText(SDL_Renderer* renderr,TTF_Font* font,int x,int y,const char* tex)
+{
+  if (!renderr || !font || !tex) {
+    std::cerr << "Invalid parameters passed to sdlDrawText!" << std::endl;
+    return;
+  }
+  SDL_Color textColor = {255, 255, 255};
+  SDL_Surface* textSurface = TTF_RenderText_Solid(font, tex, textColor);
+  if (!textSurface) {
+    std::cerr << "Failed to create text surface: " << TTF_GetError() << std::endl;
+    return;
+  }
+  std::cout << renderr << std::endl;
+  SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderr, textSurface);
+  if (!textTexture) {
+    std::cerr << "Failed to create text texture: " << SDL_GetError() << std::endl;
+    SDL_FreeSurface(textSurface);
+    return;
+  }
+  SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
+  SDL_FreeSurface(textSurface);
+
+  SDL_RenderClear(renderr);
+  if (SDL_RenderCopy(renderr, textTexture, NULL, &textRect) < 0) {
+    std::cerr << "Failed to render text: " << SDL_GetError() << std::endl;
+  }
+  SDL_RenderPresent(renderr);
+  SDL_Delay(50000); // Show for 5 seconds
+  SDL_DestroyTexture(textTexture);
+  std::cout << "nothing rendered" << std::endl;
+}
+
 void text::drawText(vector3d pos,vector3d rot,vector3d scale,const char* tex)
 {
   bool b1=glIsEnabled(GL_TEXTURE_2D);

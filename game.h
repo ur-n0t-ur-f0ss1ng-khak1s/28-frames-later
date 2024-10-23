@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <GL/gl.h>
 #include <SDL_mixer.h>
 #include <GL/glu.h>
@@ -34,6 +35,8 @@ class game{
   item items;
   std::shared_ptr<text> tex;
   SDL_Window* window;
+  SDL_Renderer* renderer;
+  std::vector<TTF_Font*> fonts;
   //unsigned int goldenApple;
 
   void update();

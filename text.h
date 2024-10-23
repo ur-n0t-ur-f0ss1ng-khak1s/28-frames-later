@@ -1,6 +1,7 @@
 #ifndef TEXT_H
 #define TEXT_H
-#include <SDL2/SDL.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <string>
@@ -20,6 +21,7 @@ class text{
   public:
     text(std::vector<unsigned int>& ch,float w,float h);
     void assignFont(std::vector<unsigned int>& ch,float w, float h);
+    void sdlDrawText(SDL_Renderer* renderr,TTF_Font* font,int x,int y,const char* tex);
     void drawText(vector3d pos,vector3d rot,vector3d scale,const char* tex);
     void test(vector3d& pos,vector3d& rot,vector3d& scale);
     void setTest(bool b);
