@@ -264,22 +264,20 @@ unsigned int game::loadTexture(const char* filename)
   glGenTextures(1, &num); // Generate a unique texture ID
 
   // Load the image using SDL_image
-  SDL_Surface* img = IMG_Load(filename); // Use IMG_Load instead of SDL_LoadBMP for multiple formats
+  SDL_Surface* img = SDL_LoadBMP(filename); // Use IMG_Load instead of SDL_LoadBMP for multiple formats
   if (!img) {
       // Handle error (e.g., log the error message)
       std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
       return 0; // Return 0 to indicate failure
   }
 
-  glBindTexture(GL_TEXTURE_2D, num); // Use the generated texture ID
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Set texture min filter
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Set texture mag filter
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Clamp to edge for horizontal
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Clamp to edge for vertical
+	glBindTexture(GL_TEXTURE_2D,num);	//and use the texture, we have just generated
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//if the texture is smaller, than the image, we get the avarege of the pixels next to it
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //same if the image bigger
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);	//we repeat the pixels in the edge of the texture, it will hide that 1px wide line at the edge of the cube, which you have seen in the video
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);	//we do it for vertically and horizontally (previous line)
 
-  // Use SDL2 to create the actual texture
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->w, img->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, img->pixels); // Use GL_RGBA for more color depth
-
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img->w,img->h,0,GL_RGB,GL_UNSIGNED_SHORT_5_6_5,img->pixels);	//we make the actual texture
   SDL_FreeSurface(img); // Free the surface as it's no longer needed
   return num; // Return the texture ID
 }
