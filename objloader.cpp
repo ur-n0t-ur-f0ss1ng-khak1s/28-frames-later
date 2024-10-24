@@ -78,72 +78,77 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 	bool coll=false;
 	int z=0;
 	int h=-1;
-	while(!in.eof())
-	{
-		in.getline(buf,256);
-		coord.push_back(new std::string(buf));
-	}
+  std::string line;
+  while (std::getline(in,line))
+  {
+    coord.push_back(line);
+  }
+//	while(!in.eof())
+//	{
+//		in.getline(buf,256);
+//		coord.push_back(new std::string(buf));
+//	}
 	for(int i=0;i<coord.size();i++)
 	{
-		if((*coord[i])[0]=='#')
+		if((coord[i])[0]=='#')
 			continue;
-		else if((*coord[i])[0]=='v' && (*coord[i])[1]==' ')
+		else if((coord[i])[0]=='v' && (coord[i])[1]==' ')
 		{
 			float tmpx,tmpy,tmpz;
-			sscanf(coord[i]->c_str(),"v %f %f %f",&tmpx,&tmpy,&tmpz);
+			sscanf(coord[i].c_str(),"v %f %f %f",&tmpx,&tmpy,&tmpz);
 			vertex.push_back(new coordinate(tmpx,tmpy,tmpz));
 			out << "v " << tmpx << " " << tmpy << " " << tmpz << std::endl;
-		}else if((*coord[i])[0]=='v' && (*coord[i])[1]=='n')
+		}else if((coord[i])[0]=='v' && (coord[i])[1]=='n')
 		{
 			float tmpx,tmpy,tmpz;
-			sscanf(coord[i]->c_str(),"vn %f %f %f",&tmpx,&tmpy,&tmpz);
+			sscanf(coord[i].c_str(),"vn %f %f %f",&tmpx,&tmpy,&tmpz);
 			normals.push_back(new coordinate(tmpx,tmpy,tmpz));	
 			out << "vn " << tmpx << " " << tmpy << " " << tmpz << std::endl;
-		}else if((*coord[i])[0]=='f')
+		}else if((coord[i])[0]=='f')
 		{
 			int a,b,c,d,e;			
 			if(coll && collplane!=NULL)
 			{
-				sscanf(coord[i]->c_str(),"f %d//%d %d//%d %d//%d %d//%d",&a,&b,&c,&b,&d,&b,&e,&b);
+				sscanf(coord[i].c_str(),"f %d//%d %d//%d %d//%d %d//%d",&a,&b,&c,&b,&d,&b,&e,&b);
 				collplane->push_back(collisionplane(normals[b-1]->x,normals[b-1]->y,normals[b-1]->z,vertex[a-1]->x,vertex[a-1]->y,vertex[a-1]->z,vertex[c-1]->x,vertex[c-1]->y,vertex[c-1]->z,vertex[d-1]->x,vertex[d-1]->y,vertex[d-1]->z,vertex[e-1]->x,vertex[e-1]->y,vertex[e-1]->z));
 			}else
 			{
-				if(count(coord[i]->begin(),coord[i]->end(),' ')==4)
+				if(count(coord[i].begin(),coord[i].end(),' ')==4)
 				{
-					if(coord[i]->find("//")!=std::string::npos)
+					if(coord[i].find("//")!=std::string::npos)
 					{
-						sscanf(coord[i]->c_str(),"f %d//%d %d//%d %d//%d %d//%d",&a,&b,&c,&b,&d,&b,&e,&b);
+						sscanf(coord[i].c_str(),"f %d//%d %d//%d %d//%d %d//%d",&a,&b,&c,&b,&d,&b,&e,&b);
 						faces.push_back(new face(b,a,c,d,e,0,0,0,0,curmat));
-					}else if(coord[i]->find("/")!=std::string::npos)
+					}else if(coord[i].find("/")!=std::string::npos)
 					{
 						int t[4];
-						sscanf(coord[i]->c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",&a,&t[0],&b,&c,&t[1],&b,&d,&t[2],&b,&e,&t[3],&b);
+						sscanf(coord[i].c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d",&a,&t[0],&b,&c,&t[1],&b,&d,&t[2],&b,&e,&t[3],&b);
 						out << t[0] << " " <<t[1] << " " <<t[2] << " " <<t[3] << " " << a << " " << b << " " << c << " " << d << " " << e << std::endl;
 						faces.push_back(new face(b,a,c,d,e,t[0],t[1],t[2],t[3],curmat));
 					}else{
-						sscanf(coord[i]->c_str(),"f %d %d %d %d",&a,&b,&c,&d);
+						sscanf(coord[i].c_str(),"f %d %d %d %d",&a,&b,&c,&d);
 						faces.push_back(new face(-1,a,b,c,d,0,0,0,0,curmat));					
 					}
 				}else{
-						if(coord[i]->find("//")!=std::string::npos)
+						if(coord[i].find("//")!=std::string::npos)
 						{
-							sscanf(coord[i]->c_str(),"f %d//%d %d//%d %d//%d",&a,&b,&c,&b,&d,&b);
+							sscanf(coord[i].c_str(),"f %d//%d %d//%d %d//%d",&a,&b,&c,&b,&d,&b);
 							faces.push_back(new face(b,a,c,d,0,0,0,curmat));
-						}else if(coord[i]->find("/")!=std::string::npos)
+						}else if(coord[i].find("/")!=std::string::npos)
 						{
 							int t[3];
-							sscanf(coord[i]->c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d",&a,&t[0],&b,&c,&t[1],&b,&d,&t[2],&b);
+							sscanf(coord[i].c_str(),"f %d/%d/%d %d/%d/%d %d/%d/%d",&a,&t[0],&b,&c,&t[1],&b,&d,&t[2],&b);
 							faces.push_back(new face(b,a,c,d,t[0],t[1],t[2],curmat));
 						}else{
-							sscanf(coord[i]->c_str(),"f %d %d %d",&a,&b,&c);
+							sscanf(coord[i].c_str(),"f %d %d %d",&a,&b,&c);
 							faces.push_back(new face(-1,a,b,c,0,0,0,curmat));					
 						}
 				}
 			}
-	}else if((*coord[i])[0]=='u' && (*coord[i])[1]=='s' && (*coord[i])[2]=='e')
+	}else if((coord[i])[0]=='u' && (coord[i])[1]=='s' && (coord[i])[2]=='e')
 	{
 		char tmp[200];
-		sscanf(coord[i]->c_str(),"usemtl %s",tmp);
+		sscanf(coord[i].c_str(),"usemtl %s",tmp);
 		if(strcmp(tmp,"collision")==0)
 		{
 			coll=true;
@@ -159,10 +164,10 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 				}
 			}
 		}
-	}else if((*coord[i])[0]=='m' && (*coord[i])[1]=='t' && (*coord[i])[2]=='l' && (*coord[i])[3]=='l')
+	}else if((coord[i])[0]=='m' && (coord[i])[1]=='t' && (coord[i])[2]=='l' && (coord[i])[3]=='l')
 	{
 		char filen[200];
-		sscanf(coord[i]->c_str(),"mtllib %s",filen);
+		sscanf(coord[i].c_str(),"mtllib %s",filen);
 		std::string filen2=path+filen;
 		std::ifstream mtlin(filen2.c_str());
 		if(!mtlin.is_open())
@@ -174,11 +179,12 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		}
 		ismaterial=true;
 		std::vector<std::string> tmp;
-		char c[200];
-		while(!mtlin.eof())
+    std::string line;
+		while(std::getline(mtlin, line))
 		{
-			mtlin.getline(c,200);
-			tmp.push_back(c);
+      tmp.push_back(line);
+//			mtlin.getline(c,200);
+//			tmp.push_back(c);
 		}
 		char name[200];
     char filename[200];
@@ -265,10 +271,10 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 							materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,-1));				
 					}
 				}
-	}else if((*coord[i])[0]=='v' && (*coord[i])[1]=='t')
+	}else if((coord[i])[0]=='v' && (coord[i])[1]=='t')
 	{
 		float u,v;
-		sscanf(coord[i]->c_str(),"vt %f %f",&u,&v);
+		sscanf(coord[i].c_str(),"vt %f %f",&u,&v);
 		texturecoordinate.push_back(new texcoord(u,1-v));
 		istexture=true;
 	}
@@ -404,8 +410,6 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 
 void objloader::clean()
 {
-	for(int i=0;i<coord.size();i++)
-		delete coord[i];
 	for(int i=0;i<faces.size();i++)
 		delete faces[i];
 	for(int i=0;i<normals.size();i++)
@@ -418,7 +422,7 @@ void objloader::clean()
 		delete texturecoordinate[i];
 	for(int i=0;i<vertexnormals.size();i++)
 		delete vertexnormals[i];
-	coord.clear();
+  coord.clear();
 	faces.clear();
 	normals.clear();
 	vertex.clear();

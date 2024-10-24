@@ -10,7 +10,7 @@ game::game()
   if (TTF_Init() == -1) {
     std::cerr << "TTF_Init failed: " << TTF_GetError() << std::endl;
   }
-  window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL);
+  window = SDL_CreateWindow("28 frames later", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, SDL_WINDOW_OPENGL);
   if (!window) {
     std::cerr << "SDL SetVideoMode failed: " << SDL_GetError() << std::endl;
     throw std::runtime_error("Failed to set video mode");
@@ -54,7 +54,8 @@ game::game()
   mapsp.push_back(vector3d(3,4,5));
   //unsigned int map=obj.load("map.obj",&mapcp);
   //unsigned int map=obj.load("collision-test.obj",&mapcp);
-  unsigned int map=obj.load("data/egypt/egypt.obj",&mapcp);
+  unsigned int map=obj.load("data/the-box/the-box.obj",&mapcp);
+  //unsigned int map=obj.load("data/egypt/egypt.obj",&mapcp);
 
   if (map == 0) {
     std::cerr << "Failed to load map.obj." << std::endl;
@@ -74,7 +75,14 @@ game::game()
   loadAnimation(anim, "data/weapon1/weapon",38);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
   weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.3,-1.63,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,30,7,300,20,"weapon1",true));
-  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[0]);
+  anim.clear();
+
+  loadAnimation(anim, "data/weapon-revolver/revolver",36);
+  std::cout << "anim size in game(): " << anim.size() << std::endl;
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.5,-3.6,8),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"rickGrimes",true));
+  anim.clear();
+
+  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[1]);
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
@@ -190,22 +198,8 @@ void game::start()
           break;
 			}
 		}
-
 		update();
-
 		show();
-    
-    char tmp[200];
-    sprintf(tmp,"health: %d",player1->getHealth());
-    SDL_Color textColor = {255, 255, 255};
-    SDL_Surface* textSurface = TTF_RenderText_Solid(fonts[0], "XXXXXXXXXX", textColor);
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    SDL_Rect textRect = {50, 50, textSurface->w, textSurface->h};
-    SDL_FreeSurface(textSurface);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-    SDL_RenderPresent(renderer);
-    SDL_DestroyTexture(textTexture);
 
 		SDL_GL_SwapWindow(window);
     int FPS=60;

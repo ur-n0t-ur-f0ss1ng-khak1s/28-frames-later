@@ -27,9 +27,7 @@ void text::sdlDrawText(SDL_Renderer* renderr,TTF_Font* font,int x,int y,const ch
     std::cerr << "Failed to render text: " << SDL_GetError() << std::endl;
   }
   SDL_RenderPresent(renderr);
-  SDL_Delay(50000); // Show for 5 seconds
   SDL_DestroyTexture(textTexture);
-  std::cout << "nothing rendered" << std::endl;
 }
 
 void text::drawText(vector3d pos,vector3d rot,vector3d scale,const char* tex)

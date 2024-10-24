@@ -201,19 +201,20 @@ void weapon::test()
   if(istest)
   {
     const Uint8* keys=SDL_GetKeyboardState(NULL);
-    if(keys[SDLK_j])
+    if(keys[SDL_SCANCODE_J])
       offset.x-=0.2;
-    if(keys[SDLK_k])
+    if(keys[SDL_SCANCODE_K])
       offset.x+=0.2;
-    if(keys[SDLK_l])
+    if(keys[SDL_SCANCODE_L])
       offset.z-=0.2;
-    if(keys[SDLK_o])
+    if(keys[SDL_SCANCODE_O])
       offset.z+=0.2;
-    if(keys[SDLK_u])
+    if(keys[SDL_SCANCODE_U])
       offset.y-=0.01;
-    if(keys[SDLK_i])
+    if(keys[SDL_SCANCODE_I])
       offset.y+=0.01;
   }
+  std::cout << offset << std::endl;
 }
 
 void weapon::addBullets(unsigned int num)

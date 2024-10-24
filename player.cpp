@@ -36,11 +36,11 @@ void player::update(std::vector<collisionplane>& collplane)
     collision::sphereplane(newpos,collplane[i].normal,collplane[i].p[0],collplane[i].p[1],collplane[i].p[2],collplane[i].p[3],cs.r);
   if(oldpos.y<newpos.y)
     isground=true;
-  if(newpos.y<-2)
-  {
-    newpos.y = -1;
-    std::cout << newpos.y << std::endl;
-  }
+//  if(newpos.y<-2)
+//  {
+//    newpos.y = -1;
+//    std::cout << newpos.y << std::endl;
+//  }
   setPosition(newpos);
 
   if(isWeapon)

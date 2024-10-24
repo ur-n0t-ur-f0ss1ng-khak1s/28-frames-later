@@ -51,7 +51,7 @@ struct texcoord{
 };
 
 class objloader{
-	std::vector<std::string*> coord;
+	std::vector<std::string> coord;
 	std::vector<coordinate*> vertex;
 	std::vector<face*> faces;
 	std::vector<coordinate*> normals;
@@ -67,6 +67,7 @@ class objloader{
 	std::vector<std::string> loadedTextures;
 	std::vector<int> loadedTexturesNum;
 	std::ofstream out;
+
 	public:
     objloader();
     ~objloader();
