@@ -79,7 +79,7 @@ game::game()
 
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.5,-3.6,8),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"rickGrimes",true));
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"rickGrimes",true));
   anim.clear();
 
   player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[1]);

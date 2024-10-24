@@ -110,8 +110,14 @@ void weapon::show()
   test();
   glPushMatrix();
     glTranslatef(curpos.x,curpos.y,curpos.z);
-    glRotatef(yaw-86.0f, 0.0f, 1.0f, 0.0f);
-    glRotatef(-pitch, 0.0f, 0.0f, 1.0f);
+    if(isaim)
+    {
+      glRotatef(yaw-90.0f, 0.0f, 1.0f, 0.0f);
+      glRotatef(-pitch-3.0f, 0.0f, 0.0f, 1.0f);
+    }else{
+      glRotatef(yaw-80.0f, 0.0f, 1.0f, 0.0f);
+      glRotatef(-pitch, 0.0f, 0.0f, 1.0f);
+    }
     if(curframe >= 0 && curframe < frames.size()) {
       glCallList(frames[curframe]);
     } else {
