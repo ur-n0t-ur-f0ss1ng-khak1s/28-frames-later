@@ -83,11 +83,6 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
   {
     coord.push_back(line);
   }
-//	while(!in.eof())
-//	{
-//		in.getline(buf,256);
-//		coord.push_back(new std::string(buf));
-//	}
 	for(int i=0;i<coord.size();i++)
 	{
 		if((coord[i])[0]=='#')

@@ -20,10 +20,12 @@
 #include "zombie.h"
 #include "item.h"
 #include "text.h"
+#include "sound.h"
 
 class game{
   std::ofstream out; 
   objloader obj;
+  sound snd;
   std::unique_ptr<player> player1;
   std::vector<std::shared_ptr<level>> levels;
   std::vector<std::shared_ptr<weapon>> weapons;

@@ -16,7 +16,12 @@ game::game()
     throw std::runtime_error("Failed to set video mode");
   }
   SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); //we need an SDL renderer for fonts and text rendering
-
+  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+      std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
+  }
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+      std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+  }
   // Create an OpenGL context
   SDL_GLContext glContext = SDL_GL_CreateContext(window);
   if (!glContext) {
@@ -36,6 +41,16 @@ game::game()
   }
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
+
+  snd.loadSound("1shot1kill");
+  snd.loadSound("bonk");
+  snd.loadSound("boom");
+  snd.loadSound("dabest");
+  snd.loadSound("gonna");
+  snd.loadSound("mob");
+  snd.loadSound("pluh");
+  snd.loadSound("pretty");
+
 
 //  std::vector<collisionplane> goApCp;
 //  goldenApple=obj.load("data/golden-apple/golden-apple.obj",&goApCp);
@@ -86,6 +101,8 @@ game::game()
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
+  //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(-20,-20,0),2.0)));
+  //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,-20,0),2.0)));
 
   // it's font time bby!
   fonts.push_back(TTF_OpenFont("ttf/Hack-Regular.ttf",24));
@@ -103,6 +120,8 @@ game::~game()
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   TTF_Quit();
+  snd.clean();
+  Mix_CloseAudio();
   SDL_Quit();
 }
 
@@ -131,6 +150,7 @@ void game::start()
           SDL_ShowCursor(SDL_DISABLE);
           if(event.button.button==SDL_BUTTON_LEFT)
           {
+            //snd.playSound("bonk");
             mousebuttondown=true;
             if(player1->getCurrentWeapon()->fire(direction,player1->cam.getVector()))
             {
@@ -216,9 +236,35 @@ void game::update()
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
-      //zombie died logic:
-      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,goldenApples[0]);
-      
+      srand(static_cast<unsigned int>(time(0)));
+
+      // Generate a random number between 0 and 4
+      int randomIndex = rand() % 5;
+
+      switch (randomIndex) {
+        case 0:
+          snd.playSound("1shot1kill");
+          break;
+        case 1:
+          snd.playSound("dabest");
+          break;
+        case 2:
+          snd.playSound("gonna");
+          break;
+        case 3:
+          snd.playSound("bonk");
+          break;
+        case 4:
+          snd.playSound("pretty");
+          break;
+        }
+        std::vector<unsigned int> anim;
+        loadAnimation(anim,"data/zombie1/zombie",60);
+        zombies.push_back(std::make_shared<zombie>(anim,30,20,10,10,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
+
+        //zombie died logic:
+        //items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,goldenApples[0]);
+ 
 //      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,weapons[0]->getOuterView());
     }
   for(int i=0;i<zombies.size();i++)
