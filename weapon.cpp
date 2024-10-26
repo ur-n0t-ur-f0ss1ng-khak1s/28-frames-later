@@ -107,7 +107,7 @@ void weapon::update()
 
 void weapon::show()
 {
-  test();
+  //test();
   glPushMatrix();
     glTranslatef(curpos.x,curpos.y,curpos.z);
     if(isaim)
@@ -220,7 +220,7 @@ void weapon::test()
     if(keys[SDL_SCANCODE_I])
       offset.y+=0.01;
   }
-  std::cout << offset << std::endl;
+  //std::cout << offset << std::endl;
 }
 
 void weapon::addBullets(unsigned int num)

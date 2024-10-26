@@ -11,7 +11,6 @@ todo:
 use SDL2 to render text for a menu/HUD
 also use openGL to render text in a seperate method
 mutliplayer
-sounds
 map selection menu and graphics settings menu
 
 todo maps:
@@ -38,6 +37,7 @@ resuscitation/resurrection charm
 todo melee:
 knife
 longsword
+Lance of Longinus
 
 based off of "FPS game (C++, OpenGL, SDL)" on youtube by "thecplusplusguy" 
 tutorial playlist: https://youtube.com/playlist?list=PLA850388B1C9C62A6&si=vKluvRxL3d5AJ3Hj

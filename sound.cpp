@@ -1,8 +1,8 @@
 #include "sound.h"
 
+// Load sound and add to map
 void sound::loadSound(const std::string& soundd)
 {
-  // Load sound and add to map
   std::string file = "data/wav/" + soundd + ".wav";
   Mix_Chunk* newSound = Mix_LoadWAV(file.c_str());
   if (!newSound) {

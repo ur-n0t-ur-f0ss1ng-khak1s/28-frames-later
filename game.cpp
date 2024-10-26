@@ -109,6 +109,18 @@ game::game()
   fonts.push_back(TTF_OpenFont("ttf/Hack-Bold.ttf",24));
   fonts.push_back(TTF_OpenFont("ttf/Hack-Italic.ttf",24));
   fonts.push_back(TTF_OpenFont("ttf/Hack-BoldItalic.ttf",24));
+
+  // opengl type fonts:
+	std::vector<unsigned int> chars;
+	char c[50];
+	for(int i=0;i<94;i++)
+	{
+		sprintf(c,"data/font/%d.obj",i);
+		unsigned int tmp=obj.load(c,NULL);
+		chars.push_back(tmp);
+	}
+	tex=std::make_shared<text>(chars,0.8,0.8);
+  out << "Text" << std::endl;
 }
 
 game::~game()
@@ -236,12 +248,14 @@ void game::update()
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
+      //zombie died logic:
       srand(static_cast<unsigned int>(time(0)));
 
       // Generate a random number between 0 and 4
       int randomIndex = rand() % 5;
 
-      switch (randomIndex) {
+      switch (randomIndex)
+      {
         case 0:
           snd.playSound("1shot1kill");
           break;
@@ -257,15 +271,10 @@ void game::update()
         case 4:
           snd.playSound("pretty");
           break;
-        }
-        std::vector<unsigned int> anim;
-        loadAnimation(anim,"data/zombie1/zombie",60);
-        zombies.push_back(std::make_shared<zombie>(anim,30,20,10,10,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
-
-        //zombie died logic:
-        //items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,goldenApples[0]);
- 
-//      items.add(vector3d(0,0,0),vector3d(1,1,1),*zombies[i]->getCollisionSphere(),0,weapons[0]->getOuterView());
+      }
+      std::vector<unsigned int> anim;
+      loadAnimation(anim,"data/zombie1/zombie",60);
+      zombies.push_back(std::make_shared<zombie>(anim,30,20,10,10,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
     }
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->setAttack(player1->getCollisionSphere()))
@@ -293,6 +302,8 @@ void game::show()
   for(int i=0;i<zombies.size();i++)
     zombies[i]->show();
   items.show();
+  	// Peter: I clear the depth buffer here so that nothing comes in front of the menu ...
+	glClear(GL_DEPTH_BUFFER_BIT);
   renderCrosshair();
   //drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
 }
@@ -377,6 +388,25 @@ void game::renderCrosshair() {
         glVertex2f(screenWidth / 2.0f, screenHeight / 2.0f);
     glEnd();
 
+    // Draw text in the upper-left corner
+    std::string text = "Health: 100";  // Sample text for display
+    float textPosX = 10.0f;  // X position offset from left
+    float textPosY = screenHeight - 20.0f;  // Y position offset from top
+
+    glPushMatrix();
+    glTranslatef(textPosX, textPosY, 0.0f);  // Move to text position
+    for (char& letter : text) {
+      // Get the index of the letter in the characters vector
+      int index = static_cast<int>(letter) - 33;
+      if (index >= 0 && index < tex->getCharacters().size()) {
+        glPushMatrix();
+        // Draw the letter .obj model
+        glCallList(tex->getCharacters()[index]);
+        glPopMatrix();
+      }
+      glTranslatef(10.0f, 0.0f, 0.0f);  // Offset for next character (horizontal spacing)
+    }
+    glPopMatrix();
     // Re-enable depth testing and lighting (for 3D rendering)
     //glEnable(GL_DEPTH_TEST);
     //glEnable(GL_LIGHTING);
@@ -386,14 +416,60 @@ void game::renderCrosshair() {
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+
+//        // Switch to 2D rendering (orthographic projection)
+//    glMatrixMode(GL_PROJECTION);
+//    glPushMatrix();
+//    glLoadIdentity();
+//    gluOrtho2D(0, screenWidth, 0, screenHeight);
+//    glMatrixMode(GL_MODELVIEW);
+//    glPushMatrix();
+//    glLoadIdentity();
+//
+//    // Draw crosshair
+//    glColor3f(1.0f, 1.0f, 1.0f);
+//    glPointSize(5.0f);
+//    glBegin(GL_POINTS);
+//        glVertex2f(screenWidth / 2.0f, screenHeight / 2.0f);
+//    glEnd();
+//    glDisable(GL_DEPTH_TEST);
+//    glDisable(GL_LIGHTING);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//    char tmp[200];
+//    sprintf(tmp,"abcd1234");
+//    std::vector<unsigned int> characters;
+//    characters = tex->getCharacters();
+//    // Render text in the upper-left corner
+//    float textX = 10.0f, textY = screenHeight - 20.0f;
+//    for(int i=0;i<strlen(tmp);i++){
+//      if(((int)tmp[i])<33 || ((int)tmp[i])>126)
+//        continue;
+//      glPushMatrix();
+//      glTranslatef(textX, textY, 0.0f);
+//
+//        glCallList(tex->getCharacters().at((int)tmp[i]-33));
+//
+//      glPopMatrix();
+//    }
+//    //glDisable(GL_DEPTH_TEST);
+//    //glDisable(GL_LIGHTING);
+//
+//    // Restore original matrices
+//    glMatrixMode(GL_PROJECTION);
+//    glPopMatrix();
+//    glMatrixMode(GL_MODELVIEW);
+//    glPopMatrix();
 }
 
 void game::drawMenu(int health,int ammo,int allammo,int point,const std::string& weaponName)
 {
+  //cam.getCamPitch(),cam.getCamYaw()
   char tmp[200];
-  sprintf(tmp,"health: %d",health);
-  tex->sdlDrawText(renderer,fonts[0],0,0,tmp);
-//  tex->drawText(vector3d(-0.5,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
+  //sprintf(tmp,"health: %d",health);
+  sprintf(tmp,"abcd1234");
+  //tex->sdlDrawText(renderer,fonts[0],0,0,tmp);
+  //tex->drawText(player1->getCamera()->getLocation(),player1->getCamera()->getVector(),vector3d(0.3,0.3,0.3),tmp,player1->getCamera()->getCamYaw(),player1->getCamera()->getCamPitch());
+  tex->drawOrtho(screenWidth,screenHeight,tmp);
 //  sprintf(tmp,"%s    %d / %d",weaponName.c_str(),ammo,allammo);
 //  tex->drawText(vector3d(-0.54,-0.39,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
 //  sprintf(tmp,"Points: %d",point);

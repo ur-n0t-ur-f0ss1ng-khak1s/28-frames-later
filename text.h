@@ -17,13 +17,17 @@ class text{
   bool istest;
   bool islocked = false;
   vector3d changepos,changerot,changescale;
+  vector3d offset; 
 
   public:
     text(std::vector<unsigned int>& ch,float w,float h);
     void assignFont(std::vector<unsigned int>& ch,float w, float h);
     void sdlDrawText(SDL_Renderer* renderr,TTF_Font* font,int x,int y,const char* tex);
-    void drawText(vector3d pos,vector3d rot,vector3d scale,const char* tex);
-    void test(vector3d& pos,vector3d& rot,vector3d& scale);
+    void drawOrtho(int screenWidth,int screenHeight, const char* text);
+    void drawText(vector3d pos,vector3d rot,vector3d scale,const char* tex,float yaw,float pitch);
+
+    void test(vector3d& scale);
     void setTest(bool b);
+    std::vector<unsigned int>& getCharacters();
 };
 #endif
