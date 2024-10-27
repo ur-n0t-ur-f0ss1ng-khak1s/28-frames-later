@@ -1,11 +1,13 @@
 #include "text.h"
 
-text::text(std::vector<unsigned int>& ch,float w,float h)
+text::text(std::vector<unsigned int>& ch,float w,float h,int screenW,int screenH)
 {
 	characters=ch;
 	istest=false;
 	width=w;
 	height=h;
+  screenWidth=screenW;
+  screenHeight=screenH;
 	islocked=false;
   offset=vector3d(1.87,1.16,3.59);
 }
@@ -40,46 +42,74 @@ void text::sdlDrawText(SDL_Renderer* renderr,TTF_Font* font,int x,int y,const ch
   SDL_DestroyTexture(textTexture);
 }
 
-void text::drawOrtho(int screenWidth,int screenHeight, const char* text)
+void text::drawOrtho(int posX,int posY,const char* text,float scale)
 {
-  test(changescale);
-  // Convert text to a vector of model indices
-  std::vector<unsigned int> textModels;
-  for (int i = 0; text[i] != '\0'; i++) {
-    std::cout << "inside loop" << std::endl;
-    if(((int)text[i])<33 || ((int)text[i])>126)
-      continue;
-
-    int index = static_cast<int>(text[i]) - 33;  // Adjust based on your ASCII offset
-    textModels.push_back(characters[index]);
-
-//    if (index >= 0 && index < characters.size()) {
-//      textModels.push_back(characters[index]);
-//    }
-  }
-
-  // Save the current projection and modelview matrices
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  gluOrtho2D(0, screenWidth, screenHeight, 0); // Set up orthographic projection
+  gluOrtho2D(0, screenWidth, 0, screenHeight);
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
 
-  // Set the text position in screen coordinates, e.g., (10, 10) for the upper-left corner
-  glTranslatef(screenWidth / 2, screenHeight / 2, 0.0f);
 
-  // Render each letter in the converted text model list
-  for (const auto& letterModel : textModels) {
+  float textX = scale + posX;
+  float textY = screenHeight - (scale*2) - posY;
+  for(int i=0;i<strlen(text);i++){
+    if(((int)text[i])<33 || ((int)text[i])>126)
+      continue;
     glPushMatrix();
-    //glTranslatef(offset.x, offset.y, offset.z);  // Text offset adjustments (if needed)
-
-    // Bind the display list or draw the letter object
-    glCallList(letterModel);
+      glTranslatef(textX, textY, 0.0f);
+      glScalef((scale*2), (scale*2), (scale*2)); 
+      glCallList(characters.at((int)text[i]-33));
 
     glPopMatrix();
+    textX+=scale;
+  }
+
+  // Restore the previous projection and modelview matrices
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+}
+
+void text::fillScreenOrtho(const char* text,float scale,float Rgb,float rGb,float rgB)
+{
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  gluOrtho2D(0, screenWidth, 0, screenHeight);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+
+  float textX = scale;
+  float textY = screenHeight - (scale*2);
+  while (textY > 20)
+  {
+    for(int i=0;i<strlen(text);i++)
+    {
+      if(((int)text[i])<33 || ((int)text[i])>126)
+        continue;
+
+      glPushMatrix();
+        glTranslatef(textX, textY, 0.0f);
+        glScalef((scale*2), (scale*2), (scale*2)); 
+        glColor3f(Rgb,rGb,rgB);
+        glCallList(characters.at((int)text[i]-33));
+      glPopMatrix();
+      textX+=scale*1.5f;
+      
+      // Wrap to the next line if at the end of the screen width
+      if (textX + (scale * 1.5f) > screenWidth) {
+        textX = scale;
+        textY -= scale * 2.5f; // Adjust line spacing as needed
+      }
+    }
   }
 
   // Restore the previous projection and modelview matrices

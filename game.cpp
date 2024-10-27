@@ -94,7 +94,7 @@ game::game()
 
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"rickGrimes",true));
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"big iron",true));
   anim.clear();
 
   player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[1]);
@@ -119,7 +119,7 @@ game::game()
 		unsigned int tmp=obj.load(c,NULL);
 		chars.push_back(tmp);
 	}
-	tex=std::make_shared<text>(chars,0.8,0.8);
+	tex=std::make_shared<text>(chars,0.8,0.8,screenWidth,screenHeight);
   out << "Text" << std::endl;
 }
 
@@ -285,7 +285,9 @@ void game::update()
   int j=items.update(player1->getCollisionSphere());
   if(j==0)
   {
-    std::cout << "weapon picked up" << std::endl;
+    char tmp[200];
+    sprintf(tmp,"weapon picked up");
+    tex->fillScreenOrtho(tmp);
   }
 }
 
@@ -305,7 +307,10 @@ void game::show()
   	// Peter: I clear the depth buffer here so that nothing comes in front of the menu ...
 	glClear(GL_DEPTH_BUFFER_BIT);
   renderCrosshair();
-  //drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
+  drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
+  char tmp[200];
+  sprintf(tmp,"weapon picked up");
+  tex->fillScreenOrtho(tmp,10.0,1.0);
 }
 
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)
@@ -365,114 +370,57 @@ void game::renderCrosshair() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    
-    // Set up orthographic projection (for 2D rendering)
     gluOrtho2D(0, screenWidth, 0, screenHeight);
-    
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
-    // Disable depth testing and lighting for 2D rendering
-    //glDisable(GL_DEPTH_TEST);
-    //glDisable(GL_LIGHTING);
-
-    // Set the color of the dot (white)
+    // Draw crosshair
     glColor3f(1.0f, 1.0f, 1.0f);
-
-    // Enable point size control 5.0f is size of the dot
     glPointSize(5.0f);
-
-    // Draw the dot at the center of the screen
     glBegin(GL_POINTS);
         glVertex2f(screenWidth / 2.0f, screenHeight / 2.0f);
     glEnd();
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_LIGHTING);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    char tmp[200];
+    sprintf(tmp,"abcd1234");
+    std::vector<unsigned int> characters;
+    characters = tex->getCharacters();
+    // Render text in the upper-left corner
+    float textX = 10.0f, textY = screenHeight - 20.0f;
+    for(int i=0;i<strlen(tmp);i++){
+      if(((int)tmp[i])<33 || ((int)tmp[i])>126)
+        continue;
+      glPushMatrix();
+        glTranslatef(textX, textY, 0.0f);
+        glScalef(20.0f, 20.0f, 20.0f); 
+        glCallList(tex->getCharacters().at((int)tmp[i]-33));
 
-    // Draw text in the upper-left corner
-    std::string text = "Health: 100";  // Sample text for display
-    float textPosX = 10.0f;  // X position offset from left
-    float textPosY = screenHeight - 20.0f;  // Y position offset from top
-
-    glPushMatrix();
-    glTranslatef(textPosX, textPosY, 0.0f);  // Move to text position
-    for (char& letter : text) {
-      // Get the index of the letter in the characters vector
-      int index = static_cast<int>(letter) - 33;
-      if (index >= 0 && index < tex->getCharacters().size()) {
-        glPushMatrix();
-        // Draw the letter .obj model
-        glCallList(tex->getCharacters()[index]);
-        glPopMatrix();
-      }
-      glTranslatef(10.0f, 0.0f, 0.0f);  // Offset for next character (horizontal spacing)
+      glPopMatrix();
+      textX+=10.0f;
     }
-    glPopMatrix();
-    // Re-enable depth testing and lighting (for 3D rendering)
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_LIGHTING);
-
-    // Restore original projection and modelview matrices
+    // Restore original matrices
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
-
-//        // Switch to 2D rendering (orthographic projection)
-//    glMatrixMode(GL_PROJECTION);
-//    glPushMatrix();
-//    glLoadIdentity();
-//    gluOrtho2D(0, screenWidth, 0, screenHeight);
-//    glMatrixMode(GL_MODELVIEW);
-//    glPushMatrix();
-//    glLoadIdentity();
-//
-//    // Draw crosshair
-//    glColor3f(1.0f, 1.0f, 1.0f);
-//    glPointSize(5.0f);
-//    glBegin(GL_POINTS);
-//        glVertex2f(screenWidth / 2.0f, screenHeight / 2.0f);
-//    glEnd();
-//    glDisable(GL_DEPTH_TEST);
-//    glDisable(GL_LIGHTING);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-//    char tmp[200];
-//    sprintf(tmp,"abcd1234");
-//    std::vector<unsigned int> characters;
-//    characters = tex->getCharacters();
-//    // Render text in the upper-left corner
-//    float textX = 10.0f, textY = screenHeight - 20.0f;
-//    for(int i=0;i<strlen(tmp);i++){
-//      if(((int)tmp[i])<33 || ((int)tmp[i])>126)
-//        continue;
-//      glPushMatrix();
-//      glTranslatef(textX, textY, 0.0f);
-//
-//        glCallList(tex->getCharacters().at((int)tmp[i]-33));
-//
-//      glPopMatrix();
-//    }
-//    //glDisable(GL_DEPTH_TEST);
-//    //glDisable(GL_LIGHTING);
-//
-//    // Restore original matrices
-//    glMatrixMode(GL_PROJECTION);
-//    glPopMatrix();
-//    glMatrixMode(GL_MODELVIEW);
-//    glPopMatrix();
 }
 
 void game::drawMenu(int health,int ammo,int allammo,int point,const std::string& weaponName)
 {
   //cam.getCamPitch(),cam.getCamYaw()
   char tmp[200];
-  //sprintf(tmp,"health: %d",health);
-  sprintf(tmp,"abcd1234");
+  sprintf(tmp,"health: %d",health);
   //tex->sdlDrawText(renderer,fonts[0],0,0,tmp);
   //tex->drawText(player1->getCamera()->getLocation(),player1->getCamera()->getVector(),vector3d(0.3,0.3,0.3),tmp,player1->getCamera()->getCamYaw(),player1->getCamera()->getCamPitch());
-  tex->drawOrtho(screenWidth,screenHeight,tmp);
-//  sprintf(tmp,"%s    %d / %d",weaponName.c_str(),ammo,allammo);
+  tex->drawOrtho(0,0,tmp);
+  sprintf(tmp,"%s    %d / %d",weaponName.c_str(),ammo,allammo);
+  tex->drawOrtho(0,20,tmp);
 //  tex->drawText(vector3d(-0.54,-0.39,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
-//  sprintf(tmp,"Points: %d",point);
+  sprintf(tmp,"points: %d",point);
+  tex->drawOrtho(0,40,tmp);
 //  tex->drawText(vector3d(0.22,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
 }
 
