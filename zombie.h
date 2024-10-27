@@ -32,6 +32,7 @@ class zombie{
     bool setAttack(collisionsphere player);
     collisionsphere* getCollisionSphere();
     void setLocation(vector3d newloc);
+    vector3d getLocation();
     void decreaseHealth(int num);
     int getHealth();
     int getStrength();

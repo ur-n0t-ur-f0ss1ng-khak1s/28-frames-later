@@ -88,6 +88,11 @@ void zombie::setLocation(vector3d newloc)
   cs.center=newloc;
 }
 
+vector3d zombie::getLocation()
+{
+  return cs.center;
+}
+
 void zombie::decreaseHealth(int num)
 {
   health-=num;

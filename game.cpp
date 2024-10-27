@@ -63,6 +63,9 @@ game::game()
   }
   items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(30,2,20),2.0),0,testgreen);
 
+  std::vector<collisionplane> laloco;
+  lance=obj.load("data/weapon-lance/lance-of-longinus.obj",&laloco);
+
 
   std::vector<collisionplane> mapcp;
   std::vector<vector3d> mapsp;
@@ -249,6 +252,7 @@ void game::update()
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
       //zombie died logic:
+      items.add(vector3d(0,0,0),vector3d(0.02,0.02,0.02),collisionsphere(zombies[i]->getLocation(),2.0),0,lance);
       srand(static_cast<unsigned int>(time(0)));
 
       // Generate a random number between 0 and 4
@@ -286,7 +290,7 @@ void game::update()
   if(j==0)
   {
     char tmp[200];
-    sprintf(tmp,"weapon picked up");
+    sprintf(tmp,"  lance aquired  ");
     tex->fillScreenOrtho(tmp);
   }
 }
@@ -308,9 +312,6 @@ void game::show()
 	glClear(GL_DEPTH_BUFFER_BIT);
   renderCrosshair();
   drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
-  char tmp[200];
-  sprintf(tmp,"weapon picked up");
-  tex->fillScreenOrtho(tmp,10.0,1.0);
 }
 
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)
@@ -381,26 +382,6 @@ void game::renderCrosshair() {
     glBegin(GL_POINTS);
         glVertex2f(screenWidth / 2.0f, screenHeight / 2.0f);
     glEnd();
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    char tmp[200];
-    sprintf(tmp,"abcd1234");
-    std::vector<unsigned int> characters;
-    characters = tex->getCharacters();
-    // Render text in the upper-left corner
-    float textX = 10.0f, textY = screenHeight - 20.0f;
-    for(int i=0;i<strlen(tmp);i++){
-      if(((int)tmp[i])<33 || ((int)tmp[i])>126)
-        continue;
-      glPushMatrix();
-        glTranslatef(textX, textY, 0.0f);
-        glScalef(20.0f, 20.0f, 20.0f); 
-        glCallList(tex->getCharacters().at((int)tmp[i]-33));
-
-      glPopMatrix();
-      textX+=10.0f;
-    }
     // Restore original matrices
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();

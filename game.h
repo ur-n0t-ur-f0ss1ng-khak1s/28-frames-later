@@ -34,6 +34,7 @@ class game{
   int screenWidth = 1024;
   int screenHeight = 768;
   unsigned int testgreen;
+  unsigned int lance;
   item items;
   std::shared_ptr<text> tex;
   SDL_Window* window;
