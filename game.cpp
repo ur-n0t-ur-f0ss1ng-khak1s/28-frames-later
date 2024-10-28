@@ -97,10 +97,16 @@ game::game()
 
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"big iron",true));
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"big iron",false));
   anim.clear();
 
-  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[1]);
+  loadAnimation(anim, "data/weapon-stoner/stoner",28);
+  std::cout << "stoner anim size in game(): " << anim.size() << std::endl;
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,30,300,7,"stoner",true));
+  anim.clear();
+
+  player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[2]);
+  player1->addWeapon(weapons[1]);
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
@@ -165,46 +171,29 @@ void game::start()
           SDL_ShowCursor(SDL_DISABLE);
           if(event.button.button==SDL_BUTTON_LEFT)
           {
-            //snd.playSound("bonk");
             mousebuttondown=true;
-            if(player1->getCurrentWeapon()->fire(direction,player1->cam.getVector()))
-            {
-              for(int i=0;i<zombies.size();i++)
-                if(collision::raysphere(
-                zombies[i]->getCollisionSphere()->center.x,
-                zombies[i]->getCollisionSphere()->center.y,
-                zombies[i]->getCollisionSphere()->center.z,
-                direction.x,direction.y,direction.z,
-                player1->getCollisionSphere().center.x,
-                player1->getCollisionSphere().center.y,
-                player1->getCollisionSphere().center.z,
-                zombies[i]->getCollisionSphere()->r))
-                {
-                  zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
-                }
-            }
           }else if(event.button.button==SDL_BUTTON_RIGHT)
           {
             player1->getCurrentWeapon()->aim();
-          }else if(event.button.button==SDL_MOUSEWHEEL && event.wheel.y > 0)
-          {
-            player1->changeWeaponUp();
-          }else if(event.button.button==SDL_MOUSEWHEEL && event.wheel.y < 0)
-          {
-            player1->changeWeaponDown();
           }
-          break;
+        case SDL_MOUSEWHEEL:
+          if (event.type == SDL_MOUSEWHEEL)
+          {
+            if(event.wheel.y > 0)
+            {
+              player1->changeWeaponUp();
+            } else if (event.wheel.y < 0) {
+              player1->changeWeaponDown();
+            }
+          }
 				case SDL_KEYDOWN:
           switch(event.key.keysym.sym)
           {
-            case SDLK_0:
+            case SDLK_1:
               player1->changeWeapon(0);
               break;
-            case SDLK_1:
-              player1->changeWeapon(1);
-              break;
             case SDLK_2:
-              player1->changeWeapon(2);
+              player1->changeWeapon(1);
               break;
             case SDLK_r:
               player1->getCurrentWeapon()->reload();
@@ -228,10 +217,31 @@ void game::start()
               break;
           }
         case SDL_MOUSEBUTTONUP:
-          mousebuttondown=false;
-          player1->getCurrentWeapon()->stopfire();
-          break;
+          if(event.button.button==SDL_BUTTON_LEFT)
+          {
+            mousebuttondown=false;
+            player1->getCurrentWeapon()->stopfire();
+            break;
+          }
 			}
+      if(mousebuttondown) {
+        if(player1->getCurrentWeapon()->fire(direction,player1->cam.getVector()))
+        {
+          for(int i=0;i<zombies.size();i++)
+            if(collision::raysphere(
+            zombies[i]->getCollisionSphere()->center.x,
+            zombies[i]->getCollisionSphere()->center.y,
+            zombies[i]->getCollisionSphere()->center.z,
+            direction.x,direction.y,direction.z,
+            player1->getCollisionSphere().center.x,
+            player1->getCollisionSphere().center.y,
+            player1->getCollisionSphere().center.z,
+            zombies[i]->getCollisionSphere()->r))
+            {
+              zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
+            }
+        }
+      }
 		}
 		update();
 		show();

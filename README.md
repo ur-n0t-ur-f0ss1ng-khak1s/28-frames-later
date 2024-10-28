@@ -52,3 +52,9 @@ Luke 22:36-38
 Then said he unto them, But now, he that hath a purse, let him take it, and likewise his scrip: and he that hath no sword, let him sell his garment, and buy one. For I say unto you, that this that is written must yet be accomplished in me, And he was reckoned among the transgressors: for the things concerning me have an end.
 And they said, Lord, behold, here are two swords.
 And he said unto them, It is enough.
+
+Notes:
+weapon animation is fire 8 frames up + 8 frames down = 16 frames. Reload is 10 frames out then 10 frames in.
+stoner is fire 8,reload 20
+
+
