@@ -19,7 +19,7 @@ paris, France
 
 todo guns:
 double barreled shotgun (second mouse shoots both barrels)
-ar-15/m16 (customizable but semi auto only)
+stoner rifle (customizable but semi auto only)
 kalashnikov (customizable and full auto)
 mosin nagant (iron sights with bayonet and customizable)
 .40 s&w block 23 (semi but can be customized to full auto ;)
@@ -38,6 +38,11 @@ todo melee:
 knife
 longsword
 Lance of Longinus
+
+todo voice:
+"do you know who i am yet? or do i have to keep showing you?"
+"hahaha whooo! at least one of us can laugh about this hahaha"
+"what's wrong with me? why do I feel so good?"
 
 based off of "FPS game (C++, OpenGL, SDL)" on youtube by "thecplusplusguy" 
 tutorial playlist: https://youtube.com/playlist?list=PLA850388B1C9C62A6&si=vKluvRxL3d5AJ3Hj
