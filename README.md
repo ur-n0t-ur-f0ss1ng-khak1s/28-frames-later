@@ -8,8 +8,10 @@ I only plan to support mouse and keyboard peripherals but SDL2 can support contr
 Contact me for tech support, bug reports, feature suggestions in my tiktok DMs @h4z3_th3_sk1d
 
 todo:
+mob generator class
+melee weapons
+respawn functionality with death score report
 use SDL2 to render text for a menu/HUD
-also use openGL to render text in a seperate method
 mutliplayer
 map selection menu and graphics settings menu
 

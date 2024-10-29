@@ -21,12 +21,14 @@
 #include "item.h"
 #include "text.h"
 #include "sound.h"
+#include "mobgen.h"
 
 class game{
   std::ofstream out; 
   objloader obj;
   sound snd;
   std::unique_ptr<player> player1;
+  std::unique_ptr<mobGen> mobGenerate;
   std::vector<std::shared_ptr<level>> levels;
   std::vector<std::shared_ptr<weapon>> weapons;
   std::vector<std::shared_ptr<zombie>> zombies;

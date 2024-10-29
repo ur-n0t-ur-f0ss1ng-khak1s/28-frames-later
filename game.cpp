@@ -2,6 +2,7 @@
 
 game::game()
 {
+  srand(static_cast<unsigned int>(time(0)));
   out.open("report.txt");
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL Initialization failed: " << SDL_GetError() << std::endl;
@@ -110,6 +111,9 @@ game::game()
   anim.clear();
   loadAnimation(anim,"data/zombie1/zombie",60);
   zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
+  anim.clear();
+
+  mobGenerate=std::make_unique<mobGen>(zombies,vector3d(-10,-10,1),vector3d(10,10,1));
   //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(-20,-20,0),2.0)));
   //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,-20,0),2.0)));
 
@@ -258,38 +262,53 @@ void game::update()
   for(int i=0;i<levels.size();i++)
     levels[i]->update();
   player1->update(levels[0]->getCollisionPlanes());
+  bool allZombiesAreDead=true;
   for(int i=0;i<zombies.size();i++)
+  {
+    if(zombies[i]->isDead()==false)
+    {
+      allZombiesAreDead=false;
+    }
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
       //zombie died logic:
-      items.add(vector3d(0,0,0),vector3d(0.02,0.02,0.02),collisionsphere(zombies[i]->getLocation(),2.0),0,lance);
-      srand(static_cast<unsigned int>(time(0)));
+      //items.add(vector3d(0,0,0),vector3d(0.02,0.02,0.02),collisionsphere(zombies[i]->getLocation(),2.0),0,lance);
+      //srand(static_cast<unsigned int>(time(0)));
 
-      // Generate a random number between 0 and 4
-      int randomIndex = rand() % 5;
+      int randomChance = rand() % 20;
 
-      switch (randomIndex)
+      if (randomChance == 0)
       {
-        case 0:
-          snd.playSound("1shot1kill");
-          break;
-        case 1:
-          snd.playSound("dabest");
-          break;
-        case 2:
-          snd.playSound("gonna");
-          break;
-        case 3:
-          snd.playSound("bonk");
-          break;
-        case 4:
-          snd.playSound("pretty");
-          break;
+        int randomIndex = rand() % 5;
+
+        switch (randomIndex)
+        {
+          case 0:
+            snd.playSound("1shot1kill");
+            break;
+          case 1:
+            snd.playSound("dabest");
+            break;
+          case 2:
+            snd.playSound("gonna");
+            break;
+          case 3:
+            snd.playSound("bonk");
+            break;
+          case 4:
+            snd.playSound("pretty");
+            break;
+        }
       }
-      std::vector<unsigned int> anim;
-      loadAnimation(anim,"data/zombie1/zombie",60);
-      zombies.push_back(std::make_shared<zombie>(anim,30,20,10,10,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
     }
+  }
+  if(allZombiesAreDead)
+  {
+    std::vector<unsigned int> anim;
+    loadAnimation(anim,"data/zombie1/zombie",60);
+    mobGenerate->spawnMob(anim);
+    anim.clear();
+  }
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->setAttack(player1->getCollisionSphere()))
     {
