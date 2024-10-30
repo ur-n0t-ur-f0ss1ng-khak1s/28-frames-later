@@ -29,6 +29,7 @@ class player:private collision {
   bool isWeapon;
   int headPosition;
   bool headUp;
+	Uint32 lifeTime;
   public:
     camera cam;
     player(const char* n,collisionsphere ccs,float sprints,float normals,float looks,std::shared_ptr<weapon> wep);
@@ -44,6 +45,7 @@ class player:private collision {
     int getPoints();
     camera* getCamera();
     std::shared_ptr<weapon> getCurrentWeapon();
+    Uint32 getLifeTime();
 
     //setters
     void setHealth(int h);
@@ -59,6 +61,7 @@ class player:private collision {
 
     void setSprint();
     void stopSprint();
+    void setLifeTime(Uint32 newLifeTime);
 };
 
 #endif

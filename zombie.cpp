@@ -12,6 +12,7 @@ zombie::zombie(std::vector<unsigned int>& anim,unsigned int w, unsigned int a, u
   cs=ccs;
   iswalk=true;
   isattack=isdead=false;
+  curframe=0;
 }
 
 bool zombie::update(std::vector<collisionplane>& col,vector3d playerloc)
@@ -20,14 +21,6 @@ bool zombie::update(std::vector<collisionplane>& col,vector3d playerloc)
   {
     direction.change(playerloc-cs.center);
     direction.normalize();
-
-    vector3d newpos(cs.center);
-    newpos.y-=0.3;
-    if(!isattack)
-      newpos+=direction*speed;
-    for(int i=0;i<col.size();i++)
-      collision::sphereplane(newpos,col[i].normal,col[i].p[0],col[i].p[1],col[i].p[2],col[i].p[3],cs.r);
-    setLocation(newpos);
     rotation.y=std::acos(direction.z);
     if(direction.x>0)
       rotation.y=-rotation.y;
@@ -39,13 +32,26 @@ bool zombie::update(std::vector<collisionplane>& col,vector3d playerloc)
     curframe=walk+attack;
     return 1;
   }
-  curframe++;
+  if(curframe < frames.size()-1)
+  {
+    curframe++;
+  }
   if(iswalk && curframe>=walk)
     curframe=0;
   else if(isattack && curframe>=walk+attack)
     curframe=walk;
   else if(isdead && curframe>=walk+attack+die)
     curframe=walk+attack+die-1;
+  if(!isdead)
+  {
+    vector3d newpos(cs.center);
+    newpos.y-=0.3;
+    if(!isattack)
+      newpos+=direction*speed;
+    for(int i=0;i<col.size();i++)
+      collision::sphereplane(newpos,col[i].normal,col[i].p[0],col[i].p[1],col[i].p[2],col[i].p[3],cs.r);
+    setLocation(newpos);
+  }
   return 0;
 }
 

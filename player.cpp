@@ -18,6 +18,7 @@ player::player(const char* n,collisionsphere ccs,float sprints,float normals,flo
   curweapon=0;
   isWeapon=true;
   headPosition=0;
+  lifeTime=0;
 }
 
 player::~player()
@@ -182,4 +183,14 @@ void player::stopSprint()
 {
   issprint=false;
   cam.setSpeed(normalspeed,cam.getMousevel());
+}
+
+Uint32 player::getLifeTime()
+{
+  return lifeTime;
+}
+
+void player::setLifeTime(Uint32 newLifeTime)
+{
+  lifeTime = newLifeTime;
 }

@@ -33,6 +33,7 @@ class game{
   std::vector<std::shared_ptr<weapon>> weapons;
   std::vector<std::shared_ptr<zombie>> zombies;
   std::vector<unsigned int> goldenApples;
+  std::vector<unsigned int> zombieAnim;
   int screenWidth = 1024;
   int screenHeight = 768;
   unsigned int testgreen;
@@ -42,6 +43,7 @@ class game{
   SDL_Window* window;
   SDL_Renderer* renderer;
   std::vector<TTF_Font*> fonts;
+	Uint32 startTime;
   //unsigned int goldenApple;
 
   void update();

@@ -98,22 +98,22 @@ game::game()
 
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
   std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,6,300,20,"big iron",false));
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,101,6,100,20,"big iron",false));
   anim.clear();
 
   loadAnimation(anim, "data/weapon-stoner/stoner",28);
   std::cout << "stoner anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,30,300,7,"stoner",true));
+  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,30,500,7,"stoner",true));
   anim.clear();
 
   player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[2]);
   player1->addWeapon(weapons[1]);
   anim.clear();
-  loadAnimation(anim,"data/zombie1/zombie",60);
-  zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
-  anim.clear();
+  loadAnimation(zombieAnim,"data/zombie1/zombie",60);
+  std::cout << "zombie size in game(): " << zombieAnim.size() << std::endl;
+  zombies.push_back(std::make_shared<zombie>(zombieAnim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
 
-  mobGenerate=std::make_unique<mobGen>(zombies,vector3d(-10,-10,1),vector3d(10,10,1));
+  mobGenerate=std::make_unique<mobGen>(zombies,vector3d(-20,-20,1),vector3d(30,30,1));
   //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(-20,-20,0),2.0)));
   //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,-20,0),2.0)));
 
@@ -133,11 +133,13 @@ game::game()
 		chars.push_back(tmp);
 	}
 	tex=std::make_shared<text>(chars,0.8,0.8,screenWidth,screenHeight);
-  out << "Text" << std::endl;
+  startTime = SDL_GetTicks();
+  out << "game started" << std::endl;
 }
 
 game::~game()
 {
+  zombieAnim.clear();
   for(int i=0;i<fonts.size();i++)
   {
     TTF_CloseFont(fonts[i]);
@@ -153,107 +155,123 @@ game::~game()
 void game::start()
 {
 	SDL_Event event;
-	Uint32 startTime;
 	bool running=true;
 	int menuoption=0;
   vector3d direction;
   bool mousebuttondown=false;
+  Uint32 loopStartTime;
 	while(running)
 	{
-		startTime=SDL_GetTicks();
+		loopStartTime=SDL_GetTicks();
 
 		while(SDL_PollEvent(&event))
 		{
-			switch(event.type)
-			{
-				case SDL_QUIT:
-					running=false;
-					std::cout << "quiting..." << std::endl;
-					break;
-        case SDL_MOUSEBUTTONDOWN:
-          player1->cam.mouseIn(true);
-          SDL_ShowCursor(SDL_DISABLE);
-          if(event.button.button==SDL_BUTTON_LEFT)
-          {
-            mousebuttondown=true;
-          }else if(event.button.button==SDL_BUTTON_RIGHT)
-          {
-            player1->getCurrentWeapon()->aim();
-          }
-        case SDL_MOUSEWHEEL:
-          if (event.type == SDL_MOUSEWHEEL)
-          {
-            if(event.wheel.y > 0)
-            {
-              player1->changeWeaponUp();
-            } else if (event.wheel.y < 0) {
-              player1->changeWeaponDown();
-            }
-          }
-				case SDL_KEYDOWN:
-          switch(event.key.keysym.sym)
-          {
-            case SDLK_1:
-              player1->changeWeapon(0);
-              break;
-            case SDLK_2:
-              player1->changeWeapon(1);
-              break;
-            case SDLK_r:
-              player1->getCurrentWeapon()->reload();
-              break;
-            case SDLK_SPACE:
-              player1->setJump();
-              break;
-            case SDLK_LSHIFT:
-              player1->setSprint();
-              break;
-            case SDLK_ESCAPE:
-              running=false;
-              break;
-          }
-          break;
-        case SDL_KEYUP:
-          switch(event.key.keysym.sym)
-          {
-            case SDLK_LSHIFT:
-              player1->stopSprint();
-              break;
-          }
-        case SDL_MOUSEBUTTONUP:
-          if(event.button.button==SDL_BUTTON_LEFT)
-          {
-            mousebuttondown=false;
-            player1->getCurrentWeapon()->stopfire();
-            break;
-          }
-			}
-      if(mousebuttondown) {
-        if(player1->getCurrentWeapon()->fire(direction,player1->cam.getVector()))
+      if(player1->getHealth()>0)
+      {
+        switch(event.type)
         {
-          for(int i=0;i<zombies.size();i++)
-            if(collision::raysphere(
-            zombies[i]->getCollisionSphere()->center.x,
-            zombies[i]->getCollisionSphere()->center.y,
-            zombies[i]->getCollisionSphere()->center.z,
-            direction.x,direction.y,direction.z,
-            player1->getCollisionSphere().center.x,
-            player1->getCollisionSphere().center.y,
-            player1->getCollisionSphere().center.z,
-            zombies[i]->getCollisionSphere()->r))
+          case SDL_QUIT:
+            running=false;
+            break;
+          case SDL_MOUSEBUTTONDOWN:
+            player1->cam.mouseIn(true);
+            SDL_ShowCursor(SDL_DISABLE);
+            if(event.button.button==SDL_BUTTON_LEFT)
             {
-              zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
+              mousebuttondown=true;
+            }else if(event.button.button==SDL_BUTTON_RIGHT)
+            {
+              player1->getCurrentWeapon()->aim();
+            }
+          case SDL_MOUSEWHEEL:
+            if (event.type == SDL_MOUSEWHEEL)
+            {
+              if(event.wheel.y > 0)
+              {
+                player1->changeWeaponUp();
+              } else if (event.wheel.y < 0) {
+                player1->changeWeaponDown();
+              }
+            }
+          case SDL_KEYDOWN:
+            switch(event.key.keysym.sym)
+            {
+              case SDLK_1:
+                player1->changeWeapon(0);
+                break;
+              case SDLK_2:
+                player1->changeWeapon(1);
+                break;
+              case SDLK_r:
+                player1->getCurrentWeapon()->reload();
+                break;
+              case SDLK_SPACE:
+                player1->setJump();
+                break;
+              case SDLK_LSHIFT:
+                player1->setSprint();
+                break;
+              case SDLK_ESCAPE:
+                running=false;
+                break;
+            }
+            break;
+          case SDL_KEYUP:
+            switch(event.key.keysym.sym)
+            {
+              case SDLK_LSHIFT:
+                player1->stopSprint();
+                break;
+            }
+          case SDL_MOUSEBUTTONUP:
+            if(event.button.button==SDL_BUTTON_LEFT)
+            {
+              mousebuttondown=false;
+              player1->getCurrentWeapon()->stopfire();
+              break;
+            }
+        }
+        if(mousebuttondown) {
+          if(player1->getCurrentWeapon()->fire(direction,player1->cam.getVector()))
+          {
+            for(int i=0;i<zombies.size();i++)
+              if(collision::raysphere(
+              zombies[i]->getCollisionSphere()->center.x,
+              zombies[i]->getCollisionSphere()->center.y,
+              zombies[i]->getCollisionSphere()->center.z,
+              direction.x,direction.y,direction.z,
+              player1->getCollisionSphere().center.x,
+              player1->getCollisionSphere().center.y,
+              player1->getCollisionSphere().center.z,
+              zombies[i]->getCollisionSphere()->r))
+              {
+                zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
+              }
+          }
+        }
+      } else if (player1->getHealth()<=0){
+        switch(event.type)
+        {
+          case SDL_QUIT:
+            running=false;
+            break;
+          case SDL_KEYDOWN:
+            switch(event.key.keysym.sym)
+            {
+              case SDLK_ESCAPE:
+                running=false;
+                break;
             }
         }
       }
-		}
+    }
 		update();
 		show();
 
 		SDL_GL_SwapWindow(window);
     int FPS=60;
-		if(1000/FPS>(SDL_GetTicks()-startTime))
-			SDL_Delay(1000/FPS-(SDL_GetTicks()-startTime));
+		if(1000/FPS>(SDL_GetTicks()-loopStartTime))
+			SDL_Delay(1000/FPS-(SDL_GetTicks()-loopStartTime));
 	}
 }
 
@@ -265,10 +283,6 @@ void game::update()
   bool allZombiesAreDead=true;
   for(int i=0;i<zombies.size();i++)
   {
-    if(zombies[i]->isDead()==false)
-    {
-      allZombiesAreDead=false;
-    }
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
       //zombie died logic:
@@ -300,14 +314,16 @@ void game::update()
             break;
         }
       }
+      player1->addPoints(1);
+    }
+    if(zombies[i]->isDead()==false)
+    {
+      allZombiesAreDead=false;
     }
   }
   if(allZombiesAreDead)
   {
-    std::vector<unsigned int> anim;
-    loadAnimation(anim,"data/zombie1/zombie",60);
-    mobGenerate->spawnMob(anim);
-    anim.clear();
+    mobGenerate->spawnMob(zombieAnim);
   }
   for(int i=0;i<zombies.size();i++)
     if(zombies[i]->setAttack(player1->getCollisionSphere()))
@@ -318,9 +334,13 @@ void game::update()
   int j=items.update(player1->getCollisionSphere());
   if(j==0)
   {
-    char tmp[200];
-    sprintf(tmp,"  lance aquired  ");
-    tex->fillScreenOrtho(tmp);
+//    char tmp[200];
+//    sprintf(tmp,"  lance aquired  ");
+//    tex->fillScreenOrtho(tmp);
+  }
+  if(player1->getHealth()<=0 && player1->getLifeTime() == 0)
+  {
+    player1->setLifeTime(SDL_GetTicks()-startTime);
   }
 }
 
@@ -328,7 +348,7 @@ void game::show()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  player1->getCamera()->control(window);
+  if(player1->getHealth()>0) player1->getCamera()->control(window);
   levels[0]->getSkybox()->drawSkybox();
   player1->getCamera()->update();
   for(int i=0;i<levels.size();i++)
@@ -340,7 +360,14 @@ void game::show()
   	// Peter: I clear the depth buffer here so that nothing comes in front of the menu ...
 	glClear(GL_DEPTH_BUFFER_BIT);
   renderCrosshair();
-  drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
+  if(player1->getHealth()<=0)
+  {
+    char tmp[200];
+    sprintf(tmp,"----game_over!_zombies_smoked:_%d_in_%d_seconds", player1->getPoints(),player1->getLifeTime()/1000);
+    tex->fillScreenOrtho(tmp,10,255);
+  } else {
+    drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
+  }
 }
 
 void game::loadAnimation(std::vector<unsigned int>& anim,const std::string filename,int frames)
@@ -394,7 +421,6 @@ unsigned int game::loadTexture(const char* filename)
   return num; // Return the texture ID
 }
 
-//renderCrosshair is courtesy of chatGPT :)
 void game::renderCrosshair() {
     // Switch to 2D rendering (orthographic projection)
     glMatrixMode(GL_PROJECTION);

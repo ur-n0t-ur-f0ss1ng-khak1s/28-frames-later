@@ -25,11 +25,10 @@ void mobGen::spawnMob(std::vector<unsigned int>& anim) {
 
     for (int i = 0; i < numZombies; ++i) {
         vector3d spawnPosition = getRandomSpawnPosition();
-        // This is a placeholder for creating and tracking zombies
         std::cout << "Spawning zombie at: (" << spawnPosition.x << ", " 
                   << spawnPosition.y << ", " << spawnPosition.z << ")\n";
         // Here, you’d create a new zombie entity at spawnPosition
-
-        zombies.push_back(std::make_shared<zombie>(anim,30,20,10,10,5,0.1,collisionsphere(spawnPosition,2.0)));
+        
+        zombies.push_back(std::make_shared<zombie>(anim,30,20,10,200,5,0.2,collisionsphere(spawnPosition,2.0)));
     }
 }

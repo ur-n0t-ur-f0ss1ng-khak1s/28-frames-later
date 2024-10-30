@@ -84,13 +84,11 @@ void camera::control(SDL_Window* win)
       ismoved=true;
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(0.0);
-			//moveCameraUp(0.0);
 		}else if(state[SDL_SCANCODE_S])
 		{
       ismoved=true;
 			if(camPitch!=90 && camPitch!=-90)
 				moveCamera(180.0);
-			//moveCameraUp(180.0);
 		}		
 		if(state[SDL_SCANCODE_A])
     {
