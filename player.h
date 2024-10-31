@@ -24,7 +24,7 @@ class player:private collision {
   float lookspeed;
   float energy;
   int points;
-  std::vector<std::shared_ptr<weapon>> weapons;
+  std::vector<std::shared_ptr<baseWeapon>> weapons;
   int curweapon;
   bool isWeapon;
   int headPosition;

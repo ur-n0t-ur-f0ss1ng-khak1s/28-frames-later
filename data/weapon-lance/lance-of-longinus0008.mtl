@@ -1,0 +1,12 @@
+# Blender 4.2.1 LTS MTL File: 'lance-of-longinus.blend'
+# www.blender.org
+
+newmtl Material.001
+Ns 640.000000
+Ka 0.500000 0.500000 0.500000
+Kd 0.801715 0.000000 0.051548
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3

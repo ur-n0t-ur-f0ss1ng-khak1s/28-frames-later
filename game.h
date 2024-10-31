@@ -17,6 +17,8 @@
 #include "level.h"
 #include "player.h"
 #include "weapon.h"
+#include "gun.h"
+#include "melee.h"
 #include "zombie.h"
 #include "item.h"
 #include "text.h"

@@ -205,7 +205,7 @@ void text::setTest(bool b)
 void text::test(vector3d& scale)
 {
   const Uint8* key=SDL_GetKeyboardState(NULL);
- if(key[SDL_SCANCODE_H])
+  if(key[SDL_SCANCODE_H])
     offset.x-=0.01;
   else if(key[SDL_SCANCODE_L])
     offset.x+=0.01;

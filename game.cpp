@@ -87,9 +87,6 @@ game::game()
     glTexCoord2f(0.0f, 0.0f); glVertex3f(-aspectRatio,  1.0f, -2.4f); // Top left
   glEnd();
 
-  // Unbind the texture
-  //glBindTexture(GL_TEXTURE_2D, 0);
-
   SDL_GL_SwapWindow(window); // Display the image
   //end the loading screen image display code****
 
@@ -141,19 +138,23 @@ game::game()
 
   levels.push_back(std::make_shared<level>("test-level",map,mapcp,mapsp,left,back,right,front,top,bottom));
   std::vector<unsigned int> anim;
-  loadAnimation(anim, "data/weapon1/weapon",38);
-  std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.3,-1.63,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,30,7,300,20,"weapon1",true));
-  anim.clear();
+//  loadAnimation(anim, "data/weapon1/weapon",38);
+//  std::cout << "anim size in game(): " << anim.size() << std::endl;
+//  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1.3,-1.63,6.7),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,30,7,300,20,"weapon1",true));
+//  anim.clear();
 
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
-  std::cout << "anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,101,6,100,20,"big iron",false));
+  std::cout << "big iron size in game(): " << anim.size() << std::endl;
+  weapons.push_back(std::make_shared<gun>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,101,6,100,20,"big iron",false));
   anim.clear();
 
   loadAnimation(anim, "data/weapon-stoner/stoner",28);
   std::cout << "stoner anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<weapon>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,30,500,7,"stoner",true));
+  weapons.push_back(std::make_shared<gun>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,30,500,7,"stoner",true));
+  anim.clear();
+
+  loadAnimation(anim,"data/weapon-lance/lance-of-longinus",10);
+  weapons.push_back(std::make_shared<melee>(anim,1000,30,30,vector3d(-0.5,-0.6,-1.3)));
   anim.clear();
 
   player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[2]);
@@ -199,6 +200,7 @@ game::~game()
   {
     TTF_CloseFont(fonts[i]);
   }
+  delete lance;
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   TTF_Quit();
