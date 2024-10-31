@@ -43,6 +43,56 @@ game::game()
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
 
+  //begin the loading screen image display code****
+  // Initialize SDL_image to load jpg
+  if (!(IMG_Init(IMG_INIT_JPG) & IMG_INIT_JPG)) {
+      std::cerr << "SDL_image could not initialize JPG support! SDL_image Error: " << IMG_GetError() << std::endl;
+      throw std::runtime_error("SDL_image initialization failed");
+  }
+
+  // Load the image
+  SDL_Surface* imageSurface = IMG_Load("data/assets/at-my-side.jpg");
+  if (!imageSurface) {
+      std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
+      throw std::runtime_error("Image loading failed");
+  }
+
+  GLuint textureID;
+  glGenTextures(1, &textureID);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+
+  // Load the pixel data from SDL surface to the OpenGL texture
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageSurface->w, imageSurface->h, 0, 
+               GL_RGB, GL_UNSIGNED_BYTE, imageSurface->pixels);
+
+    // Set texture parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glEnable(GL_TEXTURE_2D);
+  // Free the SDL surface after generating the texture
+  SDL_FreeSurface(imageSurface);
+
+  // Display the image by rendering a textured quad
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glLoadIdentity();
+  glBindTexture(GL_TEXTURE_2D, textureID);
+
+  // Flip the image vertically and render to cover the screen dimensions
+  // WARNING 2.4F IS A MAGIC NUMBER RESPONCIBLE FOR SCALING
+  float aspectRatio = static_cast<float>(screenWidth) / screenHeight;
+  glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-aspectRatio, -1.0f, -2.4f); // Bottom left
+    glTexCoord2f(1.0f, 1.0f); glVertex3f( aspectRatio, -1.0f, -2.4f); // Bottom right
+    glTexCoord2f(1.0f, 0.0f); glVertex3f( aspectRatio,  1.0f, -2.4f); // Top right
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-aspectRatio,  1.0f, -2.4f); // Top left
+  glEnd();
+
+  // Unbind the texture
+  //glBindTexture(GL_TEXTURE_2D, 0);
+
+  SDL_GL_SwapWindow(window); // Display the image
+  //end the loading screen image display code****
+
   snd.loadSound("1shot1kill");
   snd.loadSound("bonk");
   snd.loadSound("boom");
@@ -133,6 +183,11 @@ game::game()
 		chars.push_back(tmp);
 	}
 	tex=std::make_shared<text>(chars,0.8,0.8,screenWidth,screenHeight);
+
+  // Cleanup for the loading screen image
+  glDeleteTextures(1, &textureID);
+  IMG_Quit();
+
   startTime = SDL_GetTicks();
   out << "game started" << std::endl;
 }
