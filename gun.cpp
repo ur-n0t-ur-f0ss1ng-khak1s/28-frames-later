@@ -2,7 +2,7 @@
 #include "gun.h"
 
 gun::gun(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d ofset,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speedd,const char* namee,bool isa)
-  : weapon(anim, strength, pos), outerview(ol), normalanimation(na), fireanimation(fa), reloadanimation(ra)
+  : weapon(anim, strength, pos, rot), outerview(ol), normalanimation(na), fireanimation(fa), reloadanimation(ra)
 {
   outerview=ol;
   normalanimation=na;
@@ -11,13 +11,7 @@ gun::gun(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigne
   precision=(prec!=0 ? prec : 0.00001);
   aimprecision=(aprec!=0 ? aprec : 0.00001);
 
-  yaw=0.0;
-  pitch=0.0;
-
   offset=ofset;
-
-  position=pos;
-  rotation=rot;
 
   aimposition=apos;
   aimrotation=arot;
@@ -25,13 +19,9 @@ gun::gun(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigne
   allbullets=allbul;
   maxBulletsInMag=maxb;
   speed=speedd;
-  name=namee;
 
   position_expected=position;
   rotation_expected=rotation;
-
-  curpos=position;
-  currot=rotation;
 
   isaim=false;
   isreloading=false;
@@ -42,16 +32,15 @@ gun::gun(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigne
   
   lastshot=1000;
 
-  curframe=0;
   curmode=1;
 }
 
-weapon::~weapon()
+gun::~gun()
 {
 
 }
 
-void weapon::update()
+void gun::update()
 {
   lastshot++;
   curframe++;
@@ -105,7 +94,7 @@ void weapon::update()
   //std::cout << "offset: " << offset << "pitch: " << pitch << "yaw: " << yaw << std::endl;
 }
 
-void weapon::show()
+void gun::show()
 {
   //test();
   glPushMatrix();
@@ -126,10 +115,10 @@ void weapon::show()
   glPopMatrix();
 }
 
-bool weapon::fire(vector3d& direction,vector3d camdirection)
+bool gun::fire(vector3d camdirection)
 {
   if(isreloading)
-    return false;
+    return 0;
   if((!isautomatic && !isfired || isautomatic))
   {
     if(lastshot>=speed)
@@ -142,7 +131,7 @@ bool weapon::fire(vector3d& direction,vector3d camdirection)
           direction.y=camdirection.y+((float)(rand()%3-1)/aimprecision);
           direction.z=camdirection.z+((float)(rand()%3-1)/aimprecision);
         }else{
-           direction.x=camdirection.x+((float)(rand()%3-1)/precision);
+          direction.x=camdirection.x+((float)(rand()%3-1)/precision);
           direction.y=camdirection.y+((float)(rand()%3-1)/precision);
           direction.z=camdirection.z+((float)(rand()%3-1)/precision);
         }
@@ -151,22 +140,22 @@ bool weapon::fire(vector3d& direction,vector3d camdirection)
         bulletsInMag--;
         curframe=normalanimation;
         curmode=2;
-        return true;
+        return 1;
       }else{
         reload();
-        return false;
+        return 0;
       }
     }
   }
   return 0;
 }
 
-void weapon::stopfire()
+void gun::stopfire()
 {
   isfired=false;
 }
 
-void weapon::reload()
+void gun::reload()
 {
   if(!isreloading && maxBulletsInMag!=bulletsInMag)
   {
@@ -184,7 +173,7 @@ void weapon::reload()
   }
 }
 
-void weapon::aim()
+void gun::aim()
 {
   isaim=!isaim;
   if(isaim)
@@ -202,7 +191,7 @@ void weapon::aim()
   }
 }
 
-void weapon::test()
+void gun::test()
 {
   if(istest)
   {
@@ -223,49 +212,38 @@ void weapon::test()
   //std::cout << offset << std::endl;
 }
 
-void weapon::addBullets(unsigned int num)
+void gun::addBullets(unsigned int num)
 {
   allbullets+=num;
 }
 
-void weapon::setBullets(unsigned int num)
+void gun::setBullets(unsigned int num)
 {
   allbullets=num;
 }
 
-int weapon::getAmmo()
+int gun::getAmmo()
 {
   return bulletsInMag;
 }
 
-int weapon::getAllAmmo()
+int gun::getAllAmmo()
 {
   return allbullets;
 }
 
-bool weapon::isAimed()
+bool gun::isAimed()
 {
   return isaim;
 }
 
-unsigned int weapon::getOuterView()
+unsigned int gun::getOuterView()
 {
   return outerview;
 }
 
-void weapon::setCurpos(vector3d newpos)
+vector3d gun::getDirection()
 {
-  curpos = newpos;
-}
-
-void weapon::setCurrot(vector3d newrot)
-{
-  currot = newrot;
-}
-
-void weapon::setPitchAndYaw(float newpitch, float newyaw)
-{
-  pitch=newpitch;
-  yaw=newyaw;
+  return direction;
 }
 

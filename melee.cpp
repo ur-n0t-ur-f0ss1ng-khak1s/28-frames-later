@@ -1,29 +1,26 @@
 #include "weapon.h"
 #include "melee.h"
 
-melee::melee(std::vector<unsigned int>& f,int str,int del,int wdel,vector3d location)
-  : weapon(anim, str, location), delay(del), wepDelay(wdel), isKnifing(false)
+melee::melee(std::vector<unsigned int>& f,int str,int del,int wdel, vector3d offset)
+  : weapon(f, str, vector3d(0,0,0), vector3d(0,0,0), offset), delay(del), wepDelay(wdel)
 {
-  frames=f;
   isknifing=false;
   lastKnifing=100;
 }
 
-int melee::setKnife(player* p,std::vector<zombie>& zombies)
+int melee::setKnife(vector3d playerLoc,vector3d playerDir,std::vector<std::shared_ptr<zombie>>& zombies)
 {
   if(lastKnifing>delay)
   {
-    p->holdWeapon(false);
     lastKnifing=0;
     isknifing=true;
     curframe=0;
-    vector3d direction=p->cam.getVector();
     float dist;
     for(int i=0;i<zombies.size();i++)
     {
-      if(collision::raysphere(zombies[i].getSphere()->center.x,zombies[i].getSphere()->center.y,zombies[i].getSphere()->center.z,direction.z,direction.y,direction.z,p->cam.getLocation().x,p->cam.getLocation().y,p->cam.getLocation().z,zombies[i].getSphere()->r,&dist))
+      if(collision::raysphere(zombies[i]->getCollisionSphere()->center.x,zombies[i]->getCollisionSphere()->center.y,zombies[i]->getCollisionSphere()->center.z,playerDir.x,playerDir.y,playerDir.z,playerLoc.x,playerLoc.y,playerLoc.z,zombies[i]->getCollisionSphere()->r,&dist))
       {
-        if(dist<9.0 && !zombies[i].isDead())
+        if(dist<15.0 && !zombies[i]->isDead())
         {
           return i;
         }
@@ -34,11 +31,9 @@ int melee::setKnife(player* p,std::vector<zombie>& zombies)
     return -1;
 }
 
-void melee::update(player* p)
+void melee::update()
 {
   lastKnifing++;
-  if(lastKnifing>wepDelay)
-    p->holdWeapon(true);
   if(isknifing)
   {
     curframe++;
@@ -48,15 +43,25 @@ void melee::update(player* p)
       curframe=0;
     }
   }
+
+  vector3d forwardVector = currot; 
+  vector3d rightVector(forwardVector.z, 0, -forwardVector.x);
+  rightVector.normalize();
+  curpos = curpos + forwardVector * offset.z //offset forward
+                  + rightVector * offset.x //offset to the right
+                  + vector3d(0,1,0) * offset.y; //offset slight down
+
+
 }
 
 void melee::show()
 {
-  if(isknifing)
-  {
-    glTranslate(loc.x,loc.y,loc.z);
+  glPushMatrix();
+    glTranslatef(curpos.x,curpos.y,curpos.z);
+    glRotatef(yaw, 0.0f, 1.0f, 0.0f);
+    glRotatef(pitch, 1.0f, 0.0f, 0.0f);
     glCallList(frames[curframe]);
-  }
+  glPopMatrix();
 }
 
 int melee::getStrength()
@@ -73,17 +78,16 @@ void melee::test()
 {
   const Uint8* key=SDL_GetKeyboardState(NULL);
   if(key[SDL_SCANCODE_H])
-    loc.x-=0.01;
+    offset.x-=0.01;
   else if(key[SDL_SCANCODE_L])
-    loc.x+=0.01;
+    offset.x+=0.01;
   else if(key[SDL_SCANCODE_J])
-    loc.y+=0.01;
+    offset.y+=0.01;
   else if(key[SDL_SCANCODE_K])
-    loc.y-=0.01;
+    offset.y-=0.01;
   else if(key[SDL_SCANCODE_I])
-    loc.z-=0.01;
+    offset.z-=0.01;
   else if(key[SDL_SCANCODE_O])
-    loc.z+=0.01;
+    offset.z+=0.01;
   std::cout << "offset: " << offset << std::endl;
-
 }

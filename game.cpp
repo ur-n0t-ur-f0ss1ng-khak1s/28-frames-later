@@ -145,7 +145,8 @@ game::game()
 
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
   std::cout << "big iron size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<gun>(anim,anim[0],1,16,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,101,6,100,20,"big iron",false));
+  weapons.push_back(
+  std::make_shared<gun>(anim, anim[0], 1, 16, 20, vector3d(-1, -1.5, 4.5), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), 100, 1000, 101, 6, 100, 20, "big iron", false));
   anim.clear();
 
   loadAnimation(anim, "data/weapon-stoner/stoner",28);
@@ -154,13 +155,15 @@ game::game()
   anim.clear();
 
   loadAnimation(anim,"data/weapon-lance/lance-of-longinus",10);
-  weapons.push_back(std::make_shared<melee>(anim,1000,30,30,vector3d(-0.5,-0.6,-1.3)));
+  weapons.push_back(std::make_shared<melee>(anim,1000,30,30,vector3d(-1.55,-1.11,2)));
   anim.clear();
 
   player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[2]);
   player1->addWeapon(weapons[1]);
+  player1->addWeapon(weapons[0]);
   anim.clear();
-  loadAnimation(zombieAnim,"data/zombie1/zombie",60);
+  //loadAnimation(zombieAnim,"data/zombie1/zombie",60);
+  loadAnimation(zombieAnim,"data/octahedron/octahedron",60);
   std::cout << "zombie size in game(): " << zombieAnim.size() << std::endl;
   zombies.push_back(std::make_shared<zombie>(zombieAnim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
 
@@ -200,7 +203,6 @@ game::~game()
   {
     TTF_CloseFont(fonts[i]);
   }
-  delete lance;
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   TTF_Quit();
@@ -214,13 +216,16 @@ void game::start()
 	SDL_Event event;
 	bool running=true;
 	int menuoption=0;
-  vector3d direction;
   bool mousebuttondown=false;
   Uint32 loopStartTime;
 	while(running)
 	{
 		loopStartTime=SDL_GetTicks();
 
+    auto currentWeapon = player1->getCurrentWeapon();
+    // Check if the weapon is a gun
+    std::shared_ptr<gun> curWepIsGun = std::dynamic_pointer_cast<gun>(currentWeapon);
+    auto meleePtr = std::dynamic_pointer_cast<melee>(currentWeapon);
 		while(SDL_PollEvent(&event))
 		{
       if(player1->getHealth()>0)
@@ -235,10 +240,19 @@ void game::start()
             SDL_ShowCursor(SDL_DISABLE);
             if(event.button.button==SDL_BUTTON_LEFT)
             {
-              mousebuttondown=true;
+              if(curWepIsGun){
+                mousebuttondown=true;
+              }else{
+                int victim = meleePtr->setKnife(player1->getCollisionSphere().center,player1->cam.getVector(),zombies);
+                if(victim!=-1)
+                  zombies[victim]->decreaseHealth(meleePtr->getStrength());
+              }
             }else if(event.button.button==SDL_BUTTON_RIGHT)
             {
-              player1->getCurrentWeapon()->aim();
+              if(curWepIsGun)
+              {
+                curWepIsGun->aim();
+              }
             }
           case SDL_MOUSEWHEEL:
             if (event.type == SDL_MOUSEWHEEL)
@@ -260,7 +274,10 @@ void game::start()
                 player1->changeWeapon(1);
                 break;
               case SDLK_r:
-                player1->getCurrentWeapon()->reload();
+                if (curWepIsGun)
+                {
+                  curWepIsGun->reload();
+                }
                 break;
               case SDLK_SPACE:
                 player1->setJump();
@@ -283,20 +300,28 @@ void game::start()
           case SDL_MOUSEBUTTONUP:
             if(event.button.button==SDL_BUTTON_LEFT)
             {
-              mousebuttondown=false;
-              player1->getCurrentWeapon()->stopfire();
-              break;
+              if(curWepIsGun)
+              {
+                mousebuttondown=false;
+                curWepIsGun->stopfire();
+                break;
+              }else{
+                //handle melee stop attack
+              }
+
             }
         }
-        if(mousebuttondown) {
-          if(player1->getCurrentWeapon()->fire(direction,player1->cam.getVector()))
+        if(curWepIsGun && mousebuttondown) {
+          if(curWepIsGun->fire(player1->cam.getVector()))
           {
             for(int i=0;i<zombies.size();i++)
               if(collision::raysphere(
               zombies[i]->getCollisionSphere()->center.x,
               zombies[i]->getCollisionSphere()->center.y,
               zombies[i]->getCollisionSphere()->center.z,
-              direction.x,direction.y,direction.z,
+              curWepIsGun->getDirection().x,
+              curWepIsGun->getDirection().y,
+              curWepIsGun->getDirection().z,
               player1->getCollisionSphere().center.x,
               player1->getCollisionSphere().center.y,
               player1->getCollisionSphere().center.z,
@@ -423,7 +448,16 @@ void game::show()
     sprintf(tmp,"----game_over!_zombies_smoked:_%d_in_%d_seconds", player1->getPoints(),player1->getLifeTime()/1000);
     tex->fillScreenOrtho(tmp,10,255);
   } else {
-    drawMenu(player1->getHealth(),player1->getCurrentWeapon()->getAmmo(),player1->getCurrentWeapon()->getAllAmmo(),player1->getPoints(),player1->getCurrentWeapon()->getName());
+    auto currentWeapon = player1->getCurrentWeapon();
+    // Check if the weapon is a gun
+    std::shared_ptr<gun> curWepIsGun = std::dynamic_pointer_cast<gun>(currentWeapon);
+
+    if(curWepIsGun)
+    {
+      drawMenu(player1->getHealth(),curWepIsGun->getAmmo(),curWepIsGun->getAllAmmo(),player1->getPoints(),currentWeapon->getName());
+    }else{
+      drawMenu(player1->getHealth(),666,777,player1->getPoints(),currentWeapon->getName());
+    }
   }
 }
 

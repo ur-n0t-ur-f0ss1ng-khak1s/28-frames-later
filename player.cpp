@@ -8,6 +8,7 @@ player::player(const char* n,collisionsphere ccs,float sprints,float normals,flo
   normalspeed=normals;
   lookspeed=looks;
   force.change(0.0,-0.3,0.0);
+  direction.change(0.0,0.0,0.0);
   setPosition(ccs.center);
   cam.setSpeed(normalspeed,looks);
   points=0;
@@ -49,7 +50,12 @@ void player::update(std::vector<collisionplane>& collplane)
     weapons[curweapon]->setCurpos(newpos);
     weapons[curweapon]->setCurrot(cam.getVector());
     weapons[curweapon]->setPitchAndYaw(cam.getCamPitch(),cam.getCamYaw());
-    weapons[curweapon]->update();
+    auto curWeapon = weapons[curweapon];
+    if(auto gunPtr = std::dynamic_pointer_cast<gun>(curWeapon)){
+      gunPtr->update();
+    }else if(auto meleePtr = std::dynamic_pointer_cast<melee>(curWeapon)) {
+      meleePtr->update();
+    }
   }
 
   if(issprint)
@@ -78,7 +84,14 @@ void player::update(std::vector<collisionplane>& collplane)
 void player::show()
 {
   if(isWeapon)
-    weapons[curweapon]->show();
+  {
+    auto curWeapon = weapons[curweapon];
+    if(auto gunPtr = std::dynamic_pointer_cast<gun>(curWeapon)){
+      gunPtr->show();
+    }else if(auto meleePtr = std::dynamic_pointer_cast<melee>(curWeapon)) {
+      meleePtr->show();
+    }
+  }
 }
 
 void player::setPosition(vector3d pos)
@@ -163,7 +176,7 @@ void player::setJump()
 {
   if(isground)
   {
-    direction.y=1.4;
+    direction.change(0.0,2,0.0);
     isground=false;
   }
 }
@@ -194,3 +207,4 @@ void player::setLifeTime(Uint32 newLifeTime)
 {
   lifeTime = newLifeTime;
 }
+

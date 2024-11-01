@@ -11,6 +11,8 @@
 #include "collisionsphere.h"
 #include "collision.h"
 #include "weapon.h"
+#include "gun.h"
+#include "melee.h"
 #include "camera.h"
 
 class player:private collision {
@@ -18,13 +20,13 @@ class player:private collision {
   collisionsphere cs;
   int health;
   vector3d force; //gravity
-  vector3d direction;
+  vector3d direction; //direction exists solely for jumping but it's needed 
   bool isground,iscollision,issprint;
   float sprintspeed,normalspeed;
   float lookspeed;
   float energy;
   int points;
-  std::vector<std::shared_ptr<baseWeapon>> weapons;
+  std::vector<std::shared_ptr<weapon>> weapons;
   int curweapon;
   bool isWeapon;
   int headPosition;

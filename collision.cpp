@@ -1,14 +1,26 @@
 #include "collision.h"
 
-bool collision::raysphere(float xc,float yc,float zc,float xd,float yd,float zd,float xs,float ys,float zs,float r)
+bool collision::raysphere(float xc,float yc,float zc,float xd,float yd,float zd,float xs,float ys,float zs,float r,float* dist,vector3d* collpoint)
 {
 	float b=2*(xd*(xs-xc)+yd*(ys-yc)+zd*(zs-zc));
 	float c=xs*xs-2*xs*xc+xc*xc+ys*ys-2*ys*yc+yc*yc+zs*zs-2*zs*zc+zc*zc-r*r;
 	float disc=(b*b-4*c);
 	if(disc<0)	//if the discriminant is less then 0, there is no intersection
 		return false;
-	else
+	else{
+		if(dist!=NULL)
+		{
+			(*dist)=(-b+sqrt(disc))/2;
+			if(collpoint!=NULL)
+			{
+				float x=xs+(*dist)*xd;
+				float y=ys+(*dist)*yd;
+				float z=zs+(*dist)*zd;
+				collpoint->change(x,y,z);
+			}
+		}
 		return true;
+  }
 }
 
 float collision::trianglearea(vector3d p1,vector3d p2,vector3d p3)

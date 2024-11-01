@@ -12,17 +12,16 @@
 #include "vector3d.h"
 #include "collision.h"
 
-class melee{
+class melee : public weapon {
   bool isknifing;
   int delay;
   int wepDelay;
   int lastKnifing;
-  vector3d loc;
   
   public:
-    knife(std::vector<unsigned int>& f,int str,int del,int wdel,vector3d location);
-    int setKnife(player* p,std::vector<zombie>& zombies);
-    void update(player* p);
+    melee(std::vector<unsigned int>& f,int str,int del,int wdel, vector3d offset=vector3d(-1.55,-1.11,2));
+    int setKnife(vector3d playerLoc,vector3d playerDir,std::vector<std::shared_ptr<zombie>>& zombies);
+    void update();
     void show();
     bool isKnifing();
     int getStrength();
