@@ -41,10 +41,8 @@ longsword
 Lance of Longinus
 
 todo voice:
-"do you know who i am yet? or do i have to keep showing you?"
 "hahaha whooo! at least one of us can laugh about this hahaha"
 "what's wrong with me? why do I feel so good?"
-"MOM GET THE CAMERA!!!!"
 
 based off of "FPS game (C++, OpenGL, SDL)" on youtube by "thecplusplusguy" 
 tutorial playlist: https://youtube.com/playlist?list=PLA850388B1C9C62A6&si=vKluvRxL3d5AJ3Hj

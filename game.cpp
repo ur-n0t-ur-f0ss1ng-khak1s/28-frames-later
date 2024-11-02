@@ -90,13 +90,18 @@ game::game()
   SDL_GL_SwapWindow(window); // Display the image
   //end the loading screen image display code****
 
+  snd.loadSound("1-can-laugh");
   snd.loadSound("1shot1kill");
-  snd.loadSound("bonk");
-  snd.loadSound("boom");
+  snd.loadSound("aghhh");
+  snd.loadSound("bleh");
   snd.loadSound("dabest");
+  snd.loadSound("fall-7-rise-8");
   snd.loadSound("gonna");
-  snd.loadSound("mob");
-  snd.loadSound("pluh");
+  snd.loadSound("grunt1");
+  snd.loadSound("know-who");
+  snd.loadSound("mom-get-the-camera");
+  snd.loadSound("my-gorilla-pit");
+  snd.loadSound("oof");
   snd.loadSound("pretty");
 
 
@@ -327,6 +332,7 @@ void game::start()
               player1->getCollisionSphere().center.z,
               zombies[i]->getCollisionSphere()->r))
               {
+                std::cout << "shot one" << std::endl;
                 zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
               }
           }
@@ -375,23 +381,35 @@ void game::update()
 
       if (randomChance == 0)
       {
-        int randomIndex = rand() % 5;
+        int randomIndex = rand() % 8;
 
         switch (randomIndex)
         {
           case 0:
-            snd.playSound("1shot1kill");
+            snd.playSound("1-can-laugh");
             break;
           case 1:
-            snd.playSound("dabest");
+            snd.playSound("1shot1kill");
             break;
           case 2:
-            snd.playSound("gonna");
+            snd.playSound("dabest");
             break;
           case 3:
-            snd.playSound("bonk");
+            snd.playSound("fall-7-rise-8");
             break;
           case 4:
+            snd.playSound("gonna");
+            break;
+          case 5:
+            snd.playSound("know-who");
+            break;
+          case 6: 
+            snd.playSound("mom-get-the-camera");
+            break;
+          case 7:
+            snd.playSound("my-gorilla-pit");
+            break;
+          case 8:
             snd.playSound("pretty");
             break;
         }
@@ -411,6 +429,23 @@ void game::update()
     if(zombies[i]->setAttack(player1->getCollisionSphere()))
     {
       //the zombie is attacking the player
+      int randomIndex = rand() % 8;
+
+      switch (randomIndex)
+      {
+        case 0:
+          snd.playSound("aghhh");
+          break;
+        case 1:
+          snd.playSound("bleh");
+          break;
+        case 2:
+          snd.playSound("grunt1");
+          break;
+        case 3:
+          snd.playSound("oof");
+          break;
+      }
       player1->setHealth(player1->getHealth()-zombies[i]->getStrength());
     }
   int j=items.update(player1->getCollisionSphere());
