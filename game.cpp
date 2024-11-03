@@ -167,8 +167,8 @@ game::game()
   player1->addWeapon(weapons[1]);
   player1->addWeapon(weapons[0]);
   anim.clear();
-  //loadAnimation(zombieAnim,"data/zombie1/zombie",60);
-  loadAnimation(zombieAnim,"data/octahedron/octahedron",60);
+  loadAnimation(zombieAnim,"data/zombie1/zombie",60);
+  //loadAnimation(zombieAnim,"data/octahedron/octahedron",60);
   std::cout << "zombie size in game(): " << zombieAnim.size() << std::endl;
   zombies.push_back(std::make_shared<zombie>(zombieAnim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
 
