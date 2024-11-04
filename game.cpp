@@ -151,12 +151,17 @@ game::game()
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
   std::cout << "big iron size in game(): " << anim.size() << std::endl;
   weapons.push_back(
-  std::make_shared<gun>(anim, anim[0], 1, 16, 20, vector3d(-1, -1.5, 4.5), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), 100, 1000, 101, 6, 100, 20, "big iron", false));
+  std::make_shared<gun>(anim, anim[0], 1, 16, 20, vector3d(-1, -1.5, 4.5), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), 100, 1000, 75, 6, 100, 20, "big iron", false));
   anim.clear();
 
   loadAnimation(anim, "data/weapon-stoner/stoner",28);
   std::cout << "stoner anim size in game(): " << anim.size() << std::endl;
   weapons.push_back(std::make_shared<gun>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,30,500,7,"stoner",true));
+  anim.clear();
+
+  loadAnimation(anim, "data/weapon-mosin/mosin-nagant",55);
+  std::cout << "mosin nagant anim size in game(): " << anim.size() << std::endl;
+  weapons.push_back(std::make_shared<gun>(anim,anim[0],1,30,25,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,200,5,60,30,"mosin-nagant",false));
   anim.clear();
 
   loadAnimation(anim,"data/weapon-lance/lance-of-longinus",10);
@@ -166,6 +171,7 @@ game::game()
   player1=std::make_unique<player>("player1",collisionsphere(vector3d(0,7,0),2.0),0.5,0.2,0.2,weapons[2]);
   player1->addWeapon(weapons[1]);
   player1->addWeapon(weapons[0]);
+  player1->addWeapon(weapons[3]);
   anim.clear();
   loadAnimation(zombieAnim,"data/zombie1/zombie",60);
   //loadAnimation(zombieAnim,"data/octahedron/octahedron",60);

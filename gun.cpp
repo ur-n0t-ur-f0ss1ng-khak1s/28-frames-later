@@ -96,7 +96,7 @@ void gun::update()
 
 void gun::show()
 {
-  //test();
+  test();
   glPushMatrix();
     glTranslatef(curpos.x,curpos.y,curpos.z);
     if(isaim)
