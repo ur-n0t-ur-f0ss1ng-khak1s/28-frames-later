@@ -392,7 +392,7 @@ void game::update()
         switch (randomIndex)
         {
           case 0:
-            snd.playSound("1-can-laugh");
+            //snd.playSound("1-can-laugh");
             break;
           case 1:
             snd.playSound("1shot1kill");
@@ -410,7 +410,7 @@ void game::update()
             snd.playSound("know-who");
             break;
           case 6: 
-            snd.playSound("mom-get-the-camera");
+            //snd.playSound("mom-get-the-camera");
             break;
           case 7:
             snd.playSound("my-gorilla-pit");

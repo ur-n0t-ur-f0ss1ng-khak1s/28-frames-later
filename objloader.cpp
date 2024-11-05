@@ -1,63 +1,65 @@
 #include "objloader.h"
 
-	coordinate::coordinate(float a,float b,float c)
-	{
-		x=a;
-		y=b;
-		z=c;
-	}
-	face::face(int facen,int f1,int f2,int f3,int t1,int t2,int t3,int m){
-		facenum=facen;
-		faces[0]=f1;
-		faces[1]=f2;
-		faces[2]=f3;
-		texcoord[0]=t1;
-		texcoord[1]=t2;
-		texcoord[2]=t3;
-		mat=m;
-		four=false;
-	}
-	face::face(int facen,int f1,int f2,int f3,int f4,int t1,int t2,int t3,int t4,int m){
-		facenum=facen;
-		faces[0]=f1;
-		faces[1]=f2;
-		faces[2]=f3;
-		faces[3]=f4;
-		texcoord[0]=t1;
-		texcoord[1]=t2;
-		texcoord[2]=t3;
-		texcoord[3]=t4;
-		mat=m;
-		four=true;
-	}
-	
-	material::material(const char* na,float al,float n,float ni2,float* d,float* a,float* s,int i,int t)
-	{
-		name=na;
-		alpha=al;
-		ni=ni2;
-		ns=n;
-		dif[0]=d[0];
-		dif[1]=d[1];
-		dif[2]=d[2];
-		
-		amb[0]=a[0];
-		amb[1]=a[1];
-		amb[2]=a[2];
-		
-		spec[0]=s[0];
-		spec[1]=s[1];
-		spec[2]=s[2];
-		
-		illum=i;
-		texture=t;
-	}
-	
-	texcoord::texcoord(float a,float b)
-	{
-		u=a;
-		v=b;
-	}
+coordinate::coordinate(float a,float b,float c)
+{
+  x=a;
+  y=b;
+  z=c;
+}
+
+face::face(int facen,int f1,int f2,int f3,int t1,int t2,int t3,int m){
+  facenum=facen;
+  faces[0]=f1;
+  faces[1]=f2;
+  faces[2]=f3;
+  texcoord[0]=t1;
+  texcoord[1]=t2;
+  texcoord[2]=t3;
+  mat=m;
+  four=false;
+}
+
+face::face(int facen,int f1,int f2,int f3,int f4,int t1,int t2,int t3,int t4,int m){
+  facenum=facen;
+  faces[0]=f1;
+  faces[1]=f2;
+  faces[2]=f3;
+  faces[3]=f4;
+  texcoord[0]=t1;
+  texcoord[1]=t2;
+  texcoord[2]=t3;
+  texcoord[3]=t4;
+  mat=m;
+  four=true;
+}
+
+material::material(const char* na,float al,float n,float ni2,float* d,float* a,float* s,int i,int t)
+{
+  name=na;
+  alpha=al;
+  ni=ni2;
+  ns=n;
+  dif[0]=d[0];
+  dif[1]=d[1];
+  dif[2]=d[2];
+  
+  amb[0]=a[0];
+  amb[1]=a[1];
+  amb[2]=a[2];
+  
+  spec[0]=s[0];
+  spec[1]=s[1];
+  spec[2]=s[2];
+  
+  illum=i;
+  texture=t;
+}
+
+texcoord::texcoord(float a,float b)
+{
+  u=a;
+  v=b;
+}
 
 int objloader::load(const std::string& filename,std::vector<collisionplane>* collplane)
 {
@@ -85,21 +87,21 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
   }
 	for(int i=0;i<coord.size();i++)
 	{
-		if((coord[i])[0]=='#')
+		if((coord[i])[0]=='#') //ignore comment lines
 			continue;
-		else if((coord[i])[0]=='v' && (coord[i])[1]==' ')
+		else if((coord[i])[0]=='v' && (coord[i])[1]==' ') // lines starting with "v " are for vectors
 		{
 			float tmpx,tmpy,tmpz;
 			sscanf(coord[i].c_str(),"v %f %f %f",&tmpx,&tmpy,&tmpz);
 			vertex.push_back(new coordinate(tmpx,tmpy,tmpz));
 			out << "v " << tmpx << " " << tmpy << " " << tmpz << std::endl;
-		}else if((coord[i])[0]=='v' && (coord[i])[1]=='n')
+		}else if((coord[i])[0]=='v' && (coord[i])[1]=='n') // "vn" lines are for vertex normals
 		{
 			float tmpx,tmpy,tmpz;
 			sscanf(coord[i].c_str(),"vn %f %f %f",&tmpx,&tmpy,&tmpz);
 			normals.push_back(new coordinate(tmpx,tmpy,tmpz));	
 			out << "vn " << tmpx << " " << tmpy << " " << tmpz << std::endl;
-		}else if((coord[i])[0]=='f')
+		}else if((coord[i])[0]=='f') // "f x//x x/x/x etc..." lines define a face
 		{
 			int a,b,c,d,e;			
 			if(coll && collplane!=NULL)
@@ -140,7 +142,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 						}
 				}
 			}
-	}else if((coord[i])[0]=='u' && (coord[i])[1]=='s' && (coord[i])[2]=='e')
+	}else if((coord[i])[0]=='u' && (coord[i])[1]=='s' && (coord[i])[2]=='e') // handle "usemtl" lines
 	{
 		char tmp[200];
 		sscanf(coord[i].c_str(),"usemtl %s",tmp);
@@ -178,8 +180,6 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		while(std::getline(mtlin, line))
 		{
       tmp.push_back(line);
-//			mtlin.getline(c,200);
-//			tmp.push_back(c);
 		}
 		char name[200];
     char filename[200];
@@ -188,8 +188,6 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 		unsigned int texture;
 		bool ismat=false;
     strcpy(filename,"\0");
-    //filename = "\0";
-		//std::cout << tmp.size() << std::endl;
 		for(int i=0;i<tmp.size();i++)
 		{
 			if(!tmp[i].empty() && tmp[i][0]=='#')
@@ -202,7 +200,6 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 					{
 						materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,texture));
             strcpy(filename,"\0");
-            //filename = "\0";
 					}else{
 							materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,-1));				
 					}
@@ -210,35 +207,35 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 				ismat=false;
 				sscanf(tmp[i].c_str(),"newmtl %s",name);
 				out << "newmtl " << name << std::endl;
-			}else if(tmp[i][0]=='N' && tmp[i][1]=='s')
+			}else if(tmp[i][0]=='N' && tmp[i][1]=='s') // "Ns" specular exponent
 			{
 				sscanf(tmp[i].c_str(),"Ns %f",&ns);
 				ismat=true;
-			}else if(tmp[i][0]=='K' && tmp[i][1]=='a')
+			}else if(tmp[i][0]=='K' && tmp[i][1]=='a') // "Ka" ambient color
 			{
 				sscanf(tmp[i].c_str(),"Ka %f %f %f",&amb[0],&amb[1],&amb[2]);
 				ismat=true;
-			}else if(tmp[i][0]=='K' && tmp[i][1]=='d')
+			}else if(tmp[i][0]=='K' && tmp[i][1]=='d') // "Kd" diffuse color
 			{
 				sscanf(tmp[i].c_str(),"Kd %f %f %f",&dif[0],&dif[1],&dif[2]);
 				ismat=true;
-			}else if(tmp[i][0]=='K' && tmp[i][1]=='s')
+			}else if(tmp[i][0]=='K' && tmp[i][1]=='s') // "Ks" specular color
 			{
 				sscanf(tmp[i].c_str(),"Ks %f %f %f",&spec[0],&spec[1],&spec[2]);
 				ismat=true;
-			}else if(tmp[i][0]=='N' && tmp[i][1]=='i')
+			}else if(tmp[i][0]=='N' && tmp[i][1]=='i') // "Ni" optical density/index of refraction
 			{
 				sscanf(tmp[i].c_str(),"Ni %f",&ni);
 				ismat=true;
-			}else if(tmp[i][0]=='d' && tmp[i][1]==' ')
+			}else if(tmp[i][0]=='d' && tmp[i][1]==' ') // "d " dissolve/transparency
 			{
 				sscanf(tmp[i].c_str(),"d %f",&alpha);
 				ismat=true;
-			}else if(tmp[i][0]=='i' && tmp[i][1]=='l')
+			}else if(tmp[i][0]=='i' && tmp[i][1]=='l') // "illum " illumination model
 			{
 				sscanf(tmp[i].c_str(),"illum %d",&illum);
 				ismat=true;
-			}else if(tmp[i][0]=='m' && tmp[i][1]=='a')
+			}else if(tmp[i][0]=='m' && tmp[i][1]=='a') // "map_KD" directive in a .mtl file specifies a texture map for the diffuse (base) color of the material
 			{
 				sscanf(tmp[i].c_str(),"map_Kd %s",filename);
 				bool l=0;
@@ -252,7 +249,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 						l=1;
 						break;
 					}
-				if(l==0)
+				if(l==0) // load new texture if not already loaded
 					texture=loadTexture(filename2.c_str());
 				ismat=true;
 			}
@@ -266,7 +263,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 							materials.push_back(new material(name,alpha,ns,ni,dif,amb,spec,illum,-1));				
 					}
 				}
-	}else if((coord[i])[0]=='v' && (coord[i])[1]=='t')
+	}else if((coord[i])[0]=='v' && (coord[i])[1]=='t') // check for "vt" texture coordinate definition
 	{
 		float u,v;
 		sscanf(coord[i].c_str(),"vt %f %f",&u,&v);
@@ -319,7 +316,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 			istexture=true;
 		out << "2....." << std::endl;
 		isnormals=false;
-		if(faces[i]->four)
+		if(faces[i]->four) //render quadrilateral faces
 		{
 			glBegin(GL_QUADS);
 				out << "faces[i]->texcoord[0]-1 " << faces[i]->facenum-1 << std::endl;
@@ -362,7 +359,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 				glVertex3f(vertex[faces[i]->faces[3]-1]->x,vertex[faces[i]->faces[3]-1]->y,vertex[faces[i]->faces[3]-1]->z);
 			glEnd();
 		}else{
-			glBegin(GL_TRIANGLES);
+			glBegin(GL_TRIANGLES); // render the triangular face of a 3d model
 				if(isnormals)
 					glNormal3f(normals[faces[i]->facenum-1]->x,normals[faces[i]->facenum-1]->y,normals[faces[i]->facenum-1]->z);
 
@@ -489,6 +486,23 @@ objloader::objloader()
 	out.open("objreport.txt");
 }
 
+/**
+ * Calculates smooth vertex normals for the 3D model.
+ *
+ * This method iterates through each vertex and averages the normals of all faces
+ * that share this vertex, resulting in a smooth shading effect for the model.
+ * It achieves this by accumulating the face normals of adjacent faces,
+ * normalizing the resulting vector, and storing it as the vertex normal.
+ *
+ * Steps:
+ * - For each vertex, initialize a vector (vecX, vecY, vecZ) to accumulate normals and a counter (num) to count adjacent faces.
+ * - Loop through each face and check if the current vertex is part of that face.
+ * - If the vertex is part of the face, add the face normal to the accumulated vector and increment the counter.
+ * - After all faces are checked, divide the accumulated vector by the counter to get the average normal.
+ * - Normalize this average vector to ensure it has a unit length and add it to `vertexnormals` as the smoothed normal for that vertex.
+ *
+ * This method enables the use of smooth shading by creating averaged normals that result in softer lighting transitions on the model’s surface.
+ */
 void objloader::smoothnormals()
 {
 	for(int i=1;i<vertex.size()+1;i++)
@@ -521,4 +535,3 @@ void objloader::smoothnormals()
 		vertexnormals.push_back(new coordinate(vecX,vecY,vecZ));
 	}
 }
-
