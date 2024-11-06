@@ -125,7 +125,9 @@ game::game()
   mapsp.push_back(vector3d(3,4,5));
   //unsigned int map=obj.load("map.obj",&mapcp);
   //unsigned int map=obj.load("collision-test.obj",&mapcp);
-  unsigned int map=obj.load("data/the-box/the-box.obj",&mapcp);
+  //unsigned int map=obj.load("data/the-box/the-box.obj",&mapcp);
+  unsigned int map=obj.load("data/the-pit/the-pit.obj",&mapcp);
+
   //unsigned int map=obj.load("data/egypt/egypt.obj",&mapcp);
 
   if (map == 0) {
@@ -401,7 +403,7 @@ void game::update()
             snd.playSound("dabest");
             break;
           case 3:
-            snd.playSound("fall-7-rise-8");
+            //snd.playSound("fall-7-rise-8");
             break;
           case 4:
             snd.playSound("gonna");
@@ -413,7 +415,7 @@ void game::update()
             //snd.playSound("mom-get-the-camera");
             break;
           case 7:
-            snd.playSound("my-gorilla-pit");
+            //snd.playSound("my-gorilla-pit");
             break;
           case 8:
             snd.playSound("pretty");

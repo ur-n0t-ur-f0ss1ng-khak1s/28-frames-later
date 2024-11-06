@@ -8,15 +8,14 @@ I only plan to support mouse and keyboard peripherals but SDL2 can support contr
 Contact me for tech support, bug reports, feature suggestions in my tiktok DMs @h4z3_th3_sk1d
 
 todo:
-melee weapons
-respawn functionality with death score report
+refactor object loader
 use SDL2 to render text for a menu/HUD
 mutliplayer
 map selection menu and graphics settings menu
 
 todo maps:
 shopping mall map
-paris, France
+paris, France (effiel tower, arc de triomphe,the louvre)
 
 todo guns:
 double barreled shotgun (second mouse shoots both barrels)
