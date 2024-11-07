@@ -15,12 +15,12 @@
 #include "collisionplane.h"
 #ifndef OBJLOADER_H
 #define OBJLOADER_H
-#ifndef GL_UNSIGNED_SHORT_5_6_5
-#define GL_UNSIGNED_SHORT_5_6_5 0x8363
-#endif
-#ifndef GL_CLAMP_TO_EDGE
-#define GL_CLAMP_TO_EDGE 0x812F
-#endif
+//#ifndef GL_UNSIGNED_SHORT_5_6_5
+//#define GL_UNSIGNED_SHORT_5_6_5 0x8363
+//#endif
+//#ifndef GL_CLAMP_TO_EDGE
+//#define GL_CLAMP_TO_EDGE 0x812F
+//#endif
 struct coordinate{
 	float x,y,z;
 	coordinate(float a,float b,float c);

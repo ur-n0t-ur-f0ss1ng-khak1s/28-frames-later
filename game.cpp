@@ -43,18 +43,23 @@ game::game()
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
 
+  if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+    std::cerr << "SDL_image could not initialize PNG support! SDL_image Error: " << IMG_GetError() << std::endl;
+    throw std::runtime_error("SDL_image initialization failed");
+  }
+
   //begin the loading screen image display code****
   // Initialize SDL_image to load jpg
   if (!(IMG_Init(IMG_INIT_JPG) & IMG_INIT_JPG)) {
-      std::cerr << "SDL_image could not initialize JPG support! SDL_image Error: " << IMG_GetError() << std::endl;
-      throw std::runtime_error("SDL_image initialization failed");
+    std::cerr << "SDL_image could not initialize JPG support! SDL_image Error: " << IMG_GetError() << std::endl;
+    throw std::runtime_error("SDL_image initialization failed");
   }
 
   // Load the image
   SDL_Surface* imageSurface = IMG_Load("data/assets/at-my-side.jpg");
   if (!imageSurface) {
-      std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
-      throw std::runtime_error("Image loading failed");
+    std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
+    throw std::runtime_error("Image loading failed");
   }
 
   GLuint textureID;

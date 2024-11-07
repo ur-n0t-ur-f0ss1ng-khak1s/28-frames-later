@@ -437,66 +437,46 @@ objloader::~objloader()
 
 unsigned int objloader::loadTexture(const char* filename)
 {
-//    unsigned int textureID;
-//    glGenTextures(1, &textureID);
-//
-//    // Load the image using SDL2_image
-//    SDL_Surface* img = IMG_Load(filename);
-//    if (!img) {
-//        // Handle the error (e.g., log it)
-//      std::cout << "error in loadTexture line 448" << SDL_GetError() << std::endl;
-//        return 0; // or any other error value you prefer
-//    }
-//
-//    glBindTexture(GL_TEXTURE_2D, textureID);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//
-//    // Convert the surface pixels to the appropriate format
-//    GLenum format;
-//    if (img->format->BytesPerPixel == 3) {
-//        format = GL_RGB;
-//    } else if (img->format->BytesPerPixel == 4) {
-//        format = GL_RGBA;
-//    } else {
-//        std::cout << "error in loadTexture line 463" << std::endl;
-//        // Handle unexpected pixel format
-//        SDL_FreeSurface(img);
-//        return 0; // or any other error value you prefer
-//    }
-//
-//    // Upload the texture data to OpenGL
-//    glTexImage2D(GL_TEXTURE_2D, 0, format, img->w, img->h, 0, format, GL_UNSIGNED_BYTE, img->pixels);
-//    glTexEnvi(GL_TEXTURE_2D, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-//
-//    SDL_FreeSurface(img);
-//
-//    texture.push_back(textureID);
-//    loadedTextures.push_back(filename);
-//    loadedTexturesNum.push_back(textureID);
-//    return textureID;
-//END BUGGY CHATGPT METHOD BODY
-//BEGIN CPLUSPLUS GUY WORKING BODY
-  unsigned int num; // The ID for the texture
-  glGenTextures(1, &num); // Generate a unique texture ID
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
 
-  // Load the image using SDL_image
-  SDL_Surface* img = SDL_LoadBMP(filename); // Use IMG_Load instead of SDL_LoadBMP for multiple formats
-  if (!img) {
-      // Handle error (e.g., log the error message)
-      std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
-      return 0; // Return 0 to indicate failure
-  }
+    // Load the image using SDL2_image
+    SDL_Surface* img = IMG_Load(filename);
+    if (!img) {
+        std::cout << "error in loadTexture line 448" << SDL_GetError() << std::endl;
+        return 0; // or any other error value you prefer
+    }
 
-	glBindTexture(GL_TEXTURE_2D,num);	//and use the texture, we have just generated
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//if the texture is smaller, than the image, we get the avarege of the pixels next to it
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //same if the image bigger
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);	//we repeat the pixels in the edge of the texture, it will hide that 1px wide line at the edge of the cube, which you have seen in the video
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);	//we do it for vertically and horizontally (previous line)
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img->w,img->h,0,GL_RGB,GL_UNSIGNED_SHORT_5_6_5,img->pixels);	//we make the actual texture
-  SDL_FreeSurface(img); // Free the surface as it's no longer needed
-  return num; // Return the texture ID
+    
+    // Convert the surface pixels to the appropriate format
+    GLenum format;
+    if (img->format->BytesPerPixel == 3) {
+        format = GL_RGB;
+    } else if (img->format->BytesPerPixel == 4) {
+        format = GL_RGBA;
+    } else {
+        std::cout << "error in loadTexture line 463" << std::endl;
+        // Handle unexpected pixel format
+        SDL_FreeSurface(img);
+        return 0; // or any other error value you prefer
+    }
+
+    // Upload the texture data to OpenGL
+    glTexImage2D(GL_TEXTURE_2D, 0, format, img->w, img->h, 0, format, GL_UNSIGNED_BYTE, img->pixels);
+    glTexEnvi(GL_TEXTURE_2D, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+    SDL_FreeSurface(img);
+
+    texture.push_back(textureID);
+    loadedTextures.push_back(filename);
+    loadedTexturesNum.push_back(textureID);
+    return textureID;
 }
 
 objloader::objloader()
