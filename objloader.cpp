@@ -267,6 +267,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 	{
 		float u,v;
 		sscanf(coord[i].c_str(),"vt %f %f",&u,&v);
+    //std::cout << "v: " << v << " u: " << u << std::endl;
 		texturecoordinate.push_back(new texcoord(u,1-v));
 		istexture=true;
 	}
@@ -443,8 +444,8 @@ unsigned int objloader::loadTexture(const char* filename)
     // Load the image using SDL2_image
     SDL_Surface* img = IMG_Load(filename);
     if (!img) {
-        std::cout << "error in loadTexture line 448" << SDL_GetError() << std::endl;
-        return 0; // or any other error value you prefer
+      std::cout << "error in loadTexture line 448" << SDL_GetError() << std::endl;
+      return 0; // or any other error value you prefer
     }
 
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -457,14 +458,14 @@ unsigned int objloader::loadTexture(const char* filename)
     // Convert the surface pixels to the appropriate format
     GLenum format;
     if (img->format->BytesPerPixel == 3) {
-        format = GL_RGB;
+      format = GL_RGB;
     } else if (img->format->BytesPerPixel == 4) {
-        format = GL_RGBA;
+      format = GL_RGBA;
     } else {
-        std::cout << "error in loadTexture line 463" << std::endl;
-        // Handle unexpected pixel format
-        SDL_FreeSurface(img);
-        return 0; // or any other error value you prefer
+      std::cout << "error in loadTexture line 463" << std::endl;
+      // Handle unexpected pixel format
+      SDL_FreeSurface(img);
+      return 0; // or any other error value you prefer
     }
 
     // Upload the texture data to OpenGL

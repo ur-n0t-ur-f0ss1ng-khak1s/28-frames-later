@@ -132,7 +132,6 @@ game::game()
   //unsigned int map=obj.load("collision-test.obj",&mapcp);
   //unsigned int map=obj.load("data/the-box/the-box.obj",&mapcp);
   unsigned int map=obj.load("data/the-pit/the-pit.obj",&mapcp);
-
   //unsigned int map=obj.load("data/egypt/egypt.obj",&mapcp);
 
   if (map == 0) {
@@ -366,7 +365,7 @@ void game::start()
         }
       }
     }
-		update();
+		//update();
 		show();
 
 		SDL_GL_SwapWindow(window);
