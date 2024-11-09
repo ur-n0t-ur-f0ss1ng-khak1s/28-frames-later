@@ -365,7 +365,7 @@ void game::start()
         }
       }
     }
-		//update();
+		update();
 		show();
 
 		SDL_GL_SwapWindow(window);
@@ -597,5 +597,3 @@ void game::drawMenu(int health,int ammo,int allammo,int point,const std::string&
   tex->drawOrtho(0,40,tmp);
 //  tex->drawText(vector3d(0.22,0.35,-1),vector3d(0,0,0),vector3d(0.035,0.035,0.035),tmp);
 }
-
-

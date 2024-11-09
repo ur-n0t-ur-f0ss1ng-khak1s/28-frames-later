@@ -307,6 +307,7 @@ int objloader::load(const std::string& filename,std::vector<collisionplane>* col
 				glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
       }else{
+        std::cout << "here's a texture loading" << std::endl;
 				glEnable(GL_TEXTURE_2D);
 				glBindTexture(GL_TEXTURE_2D,materials[faces[i]->mat]->texture);
 			}
@@ -438,46 +439,48 @@ objloader::~objloader()
 
 unsigned int objloader::loadTexture(const char* filename)
 {
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
+  unsigned int textureID;
+  glGenTextures(1, &textureID);
 
-    // Load the image using SDL2_image
-    SDL_Surface* img = IMG_Load(filename);
-    if (!img) {
-      std::cout << "error in loadTexture line 448" << SDL_GetError() << std::endl;
-      return 0; // or any other error value you prefer
-    }
+  // Load the image using SDL2_image
+  SDL_Surface* img = SDL_LoadBMP(filename);
+  //SDL_Surface* img = IMG_Load(filename);
+  if (!img) {
+    std::cout << "error in loadTexture line 448" << SDL_GetError() << std::endl;
+    return 0; // or any other error value you prefer
+  }
 
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    
-    // Convert the surface pixels to the appropriate format
-    GLenum format;
-    if (img->format->BytesPerPixel == 3) {
-      format = GL_RGB;
-    } else if (img->format->BytesPerPixel == 4) {
-      format = GL_RGBA;
-    } else {
-      std::cout << "error in loadTexture line 463" << std::endl;
-      // Handle unexpected pixel format
-      SDL_FreeSurface(img);
-      return 0; // or any other error value you prefer
-    }
+  
+  // Convert the surface pixels to the appropriate format
+//  GLenum format;
+//  if (img->format->BytesPerPixel == 3) {
+//    format = GL_RGB;
+//  } else if (img->format->BytesPerPixel == 4) {
+//    format = GL_RGBA;
+//  } else {
+//    std::cout << "error in loadTexture line 463" << std::endl;
+//    // Handle unexpected pixel format
+//    SDL_FreeSurface(img);
+//    return 0; // or any other error value you prefer
+//  }
 
-    // Upload the texture data to OpenGL
-    glTexImage2D(GL_TEXTURE_2D, 0, format, img->w, img->h, 0, format, GL_UNSIGNED_BYTE, img->pixels);
-    glTexEnvi(GL_TEXTURE_2D, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  // Upload the texture data to OpenGL
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img->w, img->h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, img->pixels);
+  //glTexImage2D(GL_TEXTURE_2D, 0, format, img->w, img->h, 0, format, GL_UNSIGNED_BYTE, img->pixels);
+  glTexEnvi(GL_TEXTURE_2D, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    SDL_FreeSurface(img);
+  SDL_FreeSurface(img);
 
-    texture.push_back(textureID);
-    loadedTextures.push_back(filename);
-    loadedTexturesNum.push_back(textureID);
-    return textureID;
+  texture.push_back(textureID);
+  loadedTextures.push_back(filename);
+  loadedTexturesNum.push_back(textureID);
+  return textureID;
 }
 
 objloader::objloader()
