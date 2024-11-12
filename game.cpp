@@ -157,7 +157,7 @@ game::game()
   loadAnimation(anim, "data/weapon-revolver/revolver",36);
   std::cout << "big iron size in game(): " << anim.size() << std::endl;
   weapons.push_back(
-  std::make_shared<gun>(anim, anim[0], 1, 16, 20, vector3d(-1, -1.5, 4.5), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), 100, 1000, 75, 6, 100, 20, "big iron", false));
+  std::make_shared<gun>(anim, anim[0], 1, 15, 20, vector3d(-1, -1.5, 4.5), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), vector3d(0, 0, 0), 100, 1000, 75, 6, 100, 20, "big iron", false));
   anim.clear();
 
   loadAnimation(anim, "data/weapon-stoner/stoner",28);
