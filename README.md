@@ -7,8 +7,12 @@ To play the game just git clone or download the repository then execute the bina
 I only plan to support mouse and keyboard peripherals but SDL2 can support controlers/joy sticks/etc. so feel free to diy :)
 Contact me for tech support, bug reports, feature suggestions in my tiktok DMs @h4z3_th3_sk1d
 
+demo todo:
+any map that isn't a box/pit
+dead zombies drop guns, ammo, items
+
 todo:
-refactor object loader
+refactor object loader and add texture support (impossible)
 use SDL2 to render text for a menu/HUD
 mutliplayer
 map selection menu and graphics settings menu
@@ -18,9 +22,7 @@ shopping mall map
 paris, France (effiel tower, arc de triomphe,the louvre)
 
 todo guns:
-double barreled shotgun (second mouse shoots both barrels)
 kalashnikov (customizable and full auto)
-mosin nagant (iron sights with bayonet and customizable)
 .40 s&w block 23 (semi but can be customized to full auto ;)
 fgc 9mm
 
@@ -38,8 +40,6 @@ knife
 longsword
 
 todo voice:
-"hahaha whooo! at least one of us can laugh about this hahaha"
-"what's wrong with me? why do I feel so good?"
 "truely, the ugliest people do the prettiest things"
 
 based off of "FPS game (C++, OpenGL, SDL)" on youtube by "thecplusplusguy" 
@@ -51,8 +51,7 @@ Then said he unto them, But now, he that hath a purse, let him take it, and like
 And they said, Lord, behold, here are two swords.
 And he said unto them, It is enough.
 
-Notes:
-weapon animation is fire 8 frames up + 8 frames down = 16 frames. Reload is 10 frames out then 10 frames in.
-stoner is fire 8,reload 20
-
-
+"even the best weapon
+is an unhappy tool,
+hateful to living things."
+-Lao Tzu (translated by Ursula K. Le Guin)

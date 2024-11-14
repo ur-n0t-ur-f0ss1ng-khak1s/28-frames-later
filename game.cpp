@@ -131,7 +131,8 @@ game::game()
   //unsigned int map=obj.load("map.obj",&mapcp);
   //unsigned int map=obj.load("collision-test.obj",&mapcp);
   //unsigned int map=obj.load("data/the-box/the-box.obj",&mapcp);
-  unsigned int map=obj.load("data/the-pit/the-pit.obj",&mapcp);
+  //unsigned int map=obj.load("data/the-pit/the-pit.obj",&mapcp);
+  unsigned int map=obj.load("slope-test.obj",&mapcp);
   //unsigned int map=obj.load("data/egypt/egypt.obj",&mapcp);
 
   if (map == 0) {
