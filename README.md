@@ -8,7 +8,6 @@ I only plan to support mouse and keyboard peripherals but SDL2 can support contr
 Contact me for tech support, bug reports, feature suggestions in my tiktok DMs @h4z3_th3_sk1d
 
 demo todo:
-any map that isn't a box/pit
 dead zombies drop guns, ammo, items
 
 todo:

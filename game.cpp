@@ -119,7 +119,6 @@ game::game()
   {
     std::cerr << "failed to load testgreen" << std::endl;
   }
-  items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(30,2,20),2.0),0,testgreen);
 
   std::vector<collisionplane> laloco;
   lance=obj.load("data/weapon-lance/lance-of-longinus.obj",&laloco);
@@ -191,7 +190,10 @@ game::game()
   std::cout << "zombie size in game(): " << zombieAnim.size() << std::endl;
   zombies.push_back(std::make_shared<zombie>(zombieAnim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,20,0),2.0)));
 
-  mobGenerate=std::make_unique<mobGen>(zombies,vector3d(-20,-20,1),vector3d(30,30,1));
+  items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(20,15,20),2.0),0,testgreen);
+  items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(-20,15,-20),2.0),0,testgreen);
+
+  mobGenerate=std::make_unique<mobGen>(zombies,vector3d(-20,-20,15),vector3d(20,20,15));
   //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(-20,-20,0),2.0)));
   //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,-20,0),2.0)));
 

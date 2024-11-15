@@ -3,3 +3,6 @@
 
 # Ignore output files
 *.out
+
+report.txt
+objreport.txt

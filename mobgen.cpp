@@ -14,9 +14,11 @@ vector3d mobGen::getRandomSpawnPosition() {
     // Calculate random x and y within the area defined by the four corners
     std::uniform_real_distribution<float> distX(spawnArea[0].x, spawnArea[1].x);
     std::uniform_real_distribution<float> distY(spawnArea[0].y, spawnArea[1].y);
-    float zSpawnHeight = spawnArea[0].z + 5.0f; // Adjust z for the height of the spawn
 
-    return vector3d(distX(rng), distY(rng), zSpawnHeight);
+    float zSpawnHeight = spawnArea[0].z;
+    return vector3d(distX(rng), zSpawnHeight, distY(rng));
+    //return vector3d(distX(rng), distY(rng), zSpawnHeight);
+
 }
 
 void mobGen::spawnMob(std::vector<unsigned int>& anim) {
@@ -25,10 +27,8 @@ void mobGen::spawnMob(std::vector<unsigned int>& anim) {
 
     for (int i = 0; i < numZombies; ++i) {
         vector3d spawnPosition = getRandomSpawnPosition();
-        std::cout << "Spawning zombie at: (" << spawnPosition.x << ", " 
-                  << spawnPosition.y << ", " << spawnPosition.z << ")\n";
-        // Here, you’d create a new zombie entity at spawnPosition
-        
+        //std::cout << spawnPosition; 
+        std::cout << "Spawning zombie at: (" << spawnPosition.x << ", " << spawnPosition.y << ", " << spawnPosition.z << ")\n";
         zombies.push_back(std::make_shared<zombie>(anim,30,20,10,200,5,0.2,collisionsphere(spawnPosition,2.0)));
     }
 }
