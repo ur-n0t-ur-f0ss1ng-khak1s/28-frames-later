@@ -123,7 +123,6 @@ game::game()
   std::vector<collisionplane> laloco;
   lance=obj.load("data/weapon-lance/lance-of-longinus.obj",&laloco);
 
-
   std::vector<collisionplane> mapcp;
   std::vector<vector3d> mapsp;
   mapsp.push_back(vector3d(3,4,5));
