@@ -14,7 +14,7 @@ player::player(const char* n,collisionsphere ccs,float sprints,float normals,flo
   points=0;
   energy=50;
   isground=iscollision=issprint=false;
-  health=10000;
+  health=500;
   weapons.push_back(wep);
   curweapon=0;
   isWeapon=true;

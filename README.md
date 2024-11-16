@@ -12,6 +12,7 @@ refactor object loader and add texture support (impossible)
 use SDL2 to render text for a menu/HUD
 mutliplayer
 map selection menu and graphics settings menu
+fix the double barreled shitgun
 
 todo maps:
 shopping mall map

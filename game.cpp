@@ -370,8 +370,10 @@ void game::start()
               player1->getCollisionSphere().center.z,
               zombies[i]->getCollisionSphere()->r) && !zombies[i]->isDead())
               {
-                std::cout << "shot one" << std::endl;
-                zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
+                //int damage = player1->getCurrentWeapon()->getStrength();
+                int damage = curWepIsGun->getStrength();
+                std::cout << "did " << damage << " damage" << std::endl;
+                zombies[i]->decreaseHealth(damage);
                 break; //comment out to enable wall banging
               }
           }
@@ -453,21 +455,17 @@ void game::update()
       }
 
       //item drop
-      if (true || rand() % 10 == 0)
+      if (rand() % 10 == 0)
       {
         std::cout << "adding an item" << std::endl;
-        int itemIndex = rand() % 3;
-        switch (itemIndex)
+        int randValue = rand() % 15;
+        if(randValue<7)
         {
-          case 0:
-            items.add(vector3d(0, 0, 0), vector3d(0.4, 0.4, 0.4),collisionsphere(zombies[i]->getLocation(), 2.0), 1, beer);
-            break;
-          case 1:
-            items.add(vector3d(0, 0, 0), vector3d(0.5, 0.5, 0.5),collisionsphere(zombies[i]->getLocation(), 2.0), 2, gapple);
-            break;
-          case 2:
-            items.add(vector3d(0, 0, 0), vector3d(0.5, 0.5, 0.5),collisionsphere(zombies[i]->getLocation(), 2.0), 3, ammo);
-            break;
+          items.add(vector3d(0, 0, 0), vector3d(0.4, 0.4, 0.4),collisionsphere(zombies[i]->getLocation(), 2.0), 1, beer);
+        } else if(randValue<14) {
+          items.add(vector3d(0, 0, 0), vector3d(0.5, 0.5, 0.5),collisionsphere(zombies[i]->getLocation(), 2.0), 3, ammo);
+        } else {
+          items.add(vector3d(0, 0, 0), vector3d(0.5, 0.5, 0.5),collisionsphere(zombies[i]->getLocation(), 2.0), 2, gapple);
         }
       }
       player1->addPoints(1);
@@ -477,7 +475,7 @@ void game::update()
       allZombiesAreDead=false;
     }
   }
-  if(allZombiesAreDead)
+  if(allZombiesAreDead && player1->getHealth()>0)
   {
     mobGenerate->spawnMob(zombieAnim);
   }
@@ -512,7 +510,8 @@ void game::update()
       player1->addHealth(100);
       break;
     case 2:
-      player1->setHealth(10000);
+      player1->addPoints(7);
+      player1->setHealth(500);
       break;
     case 3:
       auto currentWeapon = player1->getCurrentWeapon();
@@ -524,6 +523,8 @@ void game::update()
   }
   if(player1->getHealth()<=0 && player1->getLifeTime() == 0)
   {
+    //player died logic
+    zombies = {};
     player1->setLifeTime(SDL_GetTicks()-startTime);
   }
 }

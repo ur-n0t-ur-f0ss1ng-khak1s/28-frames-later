@@ -2,7 +2,7 @@
 #include "gun.h"
 
 gun::gun(std::vector<unsigned int>& anim,unsigned int ol,unsigned int na,unsigned int fa,unsigned int ra,vector3d ofset,vector3d pos,vector3d rot,vector3d apos,vector3d arot,float prec,float aprec,int str,int maxb,int allbul,int speedd,const char* namee,bool isa)
-  : weapon(anim, strength, pos, rot), outerview(ol), normalanimation(na), fireanimation(fa), reloadanimation(ra)
+  : weapon(anim, str, pos, rot), outerview(ol), normalanimation(na), fireanimation(fa), reloadanimation(ra)
 {
   outerview=ol;
   normalanimation=na;
