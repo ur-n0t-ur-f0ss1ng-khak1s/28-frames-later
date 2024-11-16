@@ -7,9 +7,6 @@ To play the game just git clone or download the repository then execute the bina
 I only plan to support mouse and keyboard peripherals but SDL2 can support controlers/joy sticks/etc. so feel free to diy :)
 Contact me for tech support, bug reports, feature suggestions in my tiktok DMs @h4z3_th3_sk1d
 
-demo todo:
-dead zombies drop guns, ammo, items
-
 todo:
 refactor object loader and add texture support (impossible)
 use SDL2 to render text for a menu/HUD

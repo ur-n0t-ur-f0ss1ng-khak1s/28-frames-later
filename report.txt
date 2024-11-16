@@ -1,4 +1,3 @@
-data/golden-apple/golden-apple0001.obj
 data/weapon-revolver/revolver0001.obj
 data/weapon-revolver/revolver0002.obj
 data/weapon-revolver/revolver0003.obj

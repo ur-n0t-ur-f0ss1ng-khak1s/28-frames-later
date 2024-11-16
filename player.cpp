@@ -208,3 +208,8 @@ void player::setLifeTime(Uint32 newLifeTime)
   lifeTime = newLifeTime;
 }
 
+void player::addHealth(int h)
+{
+  health+=h;
+}
+

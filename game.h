@@ -34,11 +34,13 @@ class game{
   std::vector<std::shared_ptr<level>> levels;
   std::vector<std::shared_ptr<weapon>> weapons;
   std::vector<std::shared_ptr<zombie>> zombies;
-  std::vector<unsigned int> goldenApples;
   std::vector<unsigned int> zombieAnim;
   int screenWidth = 1024;
   int screenHeight = 768;
   unsigned int testgreen;
+  unsigned int gapple;
+  unsigned int beer;
+  unsigned int ammo;
   unsigned int lance;
   item items;
   std::shared_ptr<text> tex;
@@ -46,7 +48,6 @@ class game{
   SDL_Renderer* renderer;
   std::vector<TTF_Font*> fonts;
 	Uint32 startTime;
-  //unsigned int goldenApple;
 
   void update();
   void show();

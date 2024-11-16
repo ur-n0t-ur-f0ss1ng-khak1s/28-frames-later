@@ -17,6 +17,9 @@ game::game()
     throw std::runtime_error("Failed to set video mode");
   }
   SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); //we need an SDL renderer for fonts and text rendering
+  if (renderer == nullptr) {
+    std::cerr << "Failed to create renderer: " << SDL_GetError() << std::endl;
+  }
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
       std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
   }
@@ -109,12 +112,17 @@ game::game()
   snd.loadSound("oof");
   snd.loadSound("pretty");
 
+  std::vector<collisionplane> gappleCP;
+  gapple=obj.load("data/item-gapple/golden-apple.obj",&gappleCP);
 
-//  std::vector<collisionplane> goApCp;
-//  goldenApple=obj.load("data/golden-apple/golden-apple.obj",&goApCp);
-  loadAnimation(goldenApples, "data/golden-apple/golden-apple", 1);
+  std::vector<collisionplane> beerCP;
+  beer=obj.load("data/item-beer/beer.obj",&beerCP);
+
+  std::vector<collisionplane> ammoCP;
+  ammo=obj.load("data/item-ammunition/ammunition.obj",&ammoCP);
+
   std::vector<collisionplane> tegrco;
-  testgreen=obj.load("data/testgreen/testgreen.obj",&tegrco);
+  testgreen=obj.load("data/item-testgreen/testgreen.obj",&tegrco);
   if (testgreen == 0)
   {
     std::cerr << "failed to load testgreen" << std::endl;
@@ -131,7 +139,7 @@ game::game()
   //unsigned int map=obj.load("data/the-box/the-box.obj",&mapcp);
   //unsigned int map=obj.load("data/the-pit/the-pit.obj",&mapcp);
   unsigned int map=obj.load("data/map-hexagon/hexagon.obj",&mapcp);
-  //unsigned int map=obj.load("data/egypt/egypt.obj",&mapcp);
+  //unsigned int map=obj.load("data/map-egypt/egypt.obj",&mapcp);
 
   if (map == 0) {
     std::cerr << "Failed to load map.obj." << std::endl;
@@ -193,8 +201,6 @@ game::game()
   items.add(vector3d(0,0,0),vector3d(1,1,1),collisionsphere(vector3d(-20,15,-20),2.0),0,testgreen);
 
   mobGenerate=std::make_unique<mobGen>(zombies,vector3d(-20,-20,15),vector3d(20,20,15));
-  //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(-20,-20,0),2.0)));
-  //zombies.push_back(std::make_shared<zombie>(anim,30,20,10,100,5,0.1,collisionsphere(vector3d(20,-20,0),2.0)));
 
   // it's font time bby!
   fonts.push_back(TTF_OpenFont("ttf/Hack-Regular.ttf",24));
@@ -224,12 +230,24 @@ game::game()
 game::~game()
 {
   zombieAnim.clear();
-  for(int i=0;i<fonts.size();i++)
+  for (int i = 0; i < fonts.size(); i++)
   {
-    TTF_CloseFont(fonts[i]);
+    if (fonts[i] != nullptr) {
+      TTF_CloseFont(fonts[i]);
+      fonts[i] = nullptr; // Avoid double free
+    }
   }
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
+
+  //uncommenting this will lead to a segfault but commenting this causes a memory leak. I don't understand why either result occurs but commenting here is best for the users experience. needs fixing :(
+  //if (renderer != nullptr) {
+  //  SDL_DestroyRenderer(renderer);
+  //  renderer = nullptr; // Avoid double free
+  //}
+
+  if (window != nullptr) {
+    SDL_DestroyWindow(window);
+    window = nullptr; // Avoid double free
+  }
   TTF_Quit();
   snd.clean();
   Mix_CloseAudio();
@@ -350,10 +368,11 @@ void game::start()
               player1->getCollisionSphere().center.x,
               player1->getCollisionSphere().center.y,
               player1->getCollisionSphere().center.z,
-              zombies[i]->getCollisionSphere()->r))
+              zombies[i]->getCollisionSphere()->r) && !zombies[i]->isDead())
               {
                 std::cout << "shot one" << std::endl;
                 zombies[i]->decreaseHealth(player1->getCurrentWeapon()->getStrength());
+                break; //comment out to enable wall banging
               }
           }
         }
@@ -394,8 +413,6 @@ void game::update()
     if(zombies[i]->update(levels[0]->getCollisionPlanes(),player1->getCollisionSphere().center))
     {
       //zombie died logic:
-      //items.add(vector3d(0,0,0),vector3d(0.02,0.02,0.02),collisionsphere(zombies[i]->getLocation(),2.0),0,lance);
-      //srand(static_cast<unsigned int>(time(0)));
 
       int randomChance = rand() % 20;
 
@@ -434,6 +451,25 @@ void game::update()
             break;
         }
       }
+
+      //item drop
+      if (true || rand() % 10 == 0)
+      {
+        std::cout << "adding an item" << std::endl;
+        int itemIndex = rand() % 3;
+        switch (itemIndex)
+        {
+          case 0:
+            items.add(vector3d(0, 0, 0), vector3d(0.4, 0.4, 0.4),collisionsphere(zombies[i]->getLocation(), 2.0), 1, beer);
+            break;
+          case 1:
+            items.add(vector3d(0, 0, 0), vector3d(0.5, 0.5, 0.5),collisionsphere(zombies[i]->getLocation(), 2.0), 2, gapple);
+            break;
+          case 2:
+            items.add(vector3d(0, 0, 0), vector3d(0.5, 0.5, 0.5),collisionsphere(zombies[i]->getLocation(), 2.0), 3, ammo);
+            break;
+        }
+      }
       player1->addPoints(1);
     }
     if(zombies[i]->isDead()==false)
@@ -469,11 +505,22 @@ void game::update()
       player1->setHealth(player1->getHealth()-zombies[i]->getStrength());
     }
   int j=items.update(player1->getCollisionSphere());
-  if(j==0)
-  {
-//    char tmp[200];
-//    sprintf(tmp,"  lance aquired  ");
-//    tex->fillScreenOrtho(tmp);
+  switch(j){
+    case -1:
+      break;
+    case 1:
+      player1->addHealth(100);
+      break;
+    case 2:
+      player1->setHealth(10000);
+      break;
+    case 3:
+      auto currentWeapon = player1->getCurrentWeapon();
+      // Check if the weapon is a gun
+      std::shared_ptr<gun> curWepIsGun = std::dynamic_pointer_cast<gun>(currentWeapon);
+      if(curWepIsGun)
+        curWepIsGun->addBullets(50);
+      break;
   }
   if(player1->getHealth()<=0 && player1->getLifeTime() == 0)
   {

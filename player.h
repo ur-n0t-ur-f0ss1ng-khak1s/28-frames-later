@@ -53,6 +53,9 @@ class player:private collision {
     void setHealth(int h);
     void addPoints(int n);
 
+    //adders
+    void addHealth(int h);
+
     void addWeapon(std::shared_ptr<weapon> wep);
     void changeWeapon(int num);
     void changeWeaponDown();

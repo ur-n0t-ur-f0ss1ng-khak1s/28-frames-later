@@ -30,4 +30,3 @@ void weapon::setPitchAndYaw(float newpitch, float newyaw)
   pitch=newpitch;
   yaw=newyaw;
 }
-
