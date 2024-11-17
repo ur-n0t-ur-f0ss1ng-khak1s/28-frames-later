@@ -57,9 +57,20 @@ game::game()
     std::cerr << "SDL_image could not initialize JPG support! SDL_image Error: " << IMG_GetError() << std::endl;
     throw std::runtime_error("SDL_image initialization failed");
   }
-
+  
   // Load the image
-  SDL_Surface* imageSurface = IMG_Load("data/assets/at-my-side.jpg");
+  SDL_Surface* imageSurface;
+  switch (rand() % 2)
+  {
+    case 0:
+      imageSurface = IMG_Load("data/assets/at-my-side.jpg");
+      break;
+    case 1:
+      imageSurface = IMG_Load("data/assets/bea2-360x270.jpg");
+      break;
+  }
+  //SDL_Surface* imageSurface = IMG_Load("data/assets/at-my-side.jpg");
+  //SDL_Surface* imageSurface = IMG_Load("data/assets/bea2-360x270.jpg");
   if (!imageSurface) {
     std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
     throw std::runtime_error("Image loading failed");
@@ -370,7 +381,6 @@ void game::start()
               player1->getCollisionSphere().center.z,
               zombies[i]->getCollisionSphere()->r) && !zombies[i]->isDead())
               {
-                //int damage = player1->getCurrentWeapon()->getStrength();
                 int damage = curWepIsGun->getStrength();
                 std::cout << "did " << damage << " damage" << std::endl;
                 zombies[i]->decreaseHealth(damage);
