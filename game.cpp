@@ -523,7 +523,7 @@ void game::update()
       break;
     case 2:
       player1->addPoints(7);
-      player1->setHealth(500);
+      player1->addHealth(500);
       break;
     case 3:
       auto currentWeapon = player1->getCurrentWeapon();
@@ -561,7 +561,7 @@ void game::show()
   if(player1->getHealth()<=0)
   {
     char tmp[200];
-    sprintf(tmp,"----game_over!_zombies_smoked:_%d_in_%d_seconds", player1->getPoints(),player1->getLifeTime()/1000);
+    sprintf(tmp,"----game_over!_points_earned:_%d_in_%d_seconds", player1->getPoints(),player1->getLifeTime()/1000);
     tex->fillScreenOrtho(tmp,10,255);
   } else {
     auto currentWeapon = player1->getCurrentWeapon();
