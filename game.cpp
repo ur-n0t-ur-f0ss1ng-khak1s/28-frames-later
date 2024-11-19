@@ -60,13 +60,16 @@ game::game()
   
   // Load the image
   SDL_Surface* imageSurface;
-  switch (rand() % 2)
+  switch (rand() % 3)
   {
     case 0:
       imageSurface = IMG_Load("data/assets/at-my-side.jpg");
       break;
     case 1:
       imageSurface = IMG_Load("data/assets/bea2-360x270.jpg");
+      break;
+    case 2:
+      imageSurface = IMG_Load("data/assets/ross-and-misato-wedding-360x270.jpg");
       break;
   }
   //SDL_Surface* imageSurface = IMG_Load("data/assets/at-my-side.jpg");
@@ -122,6 +125,11 @@ game::game()
   snd.loadSound("my-gorilla-pit");
   snd.loadSound("oof");
   snd.loadSound("pretty");
+  snd.loadSound("eh-good-shooting-guy");
+  snd.loadSound("game-over");
+  snd.loadSound("found-beer-now-happy");
+  snd.loadSound("he-is-dead-now");
+  snd.loadSound("training-paid-off");
 
   std::vector<collisionplane> gappleCP;
   gapple=obj.load("data/item-gapple/golden-apple.obj",&gappleCP);
@@ -430,12 +438,12 @@ void game::update()
 
       if (randomChance == 0)
       {
-        int randomIndex = rand() % 8;
+        int randomIndex = rand() % 7;
 
         switch (randomIndex)
         {
           case 0:
-            //snd.playSound("1-can-laugh");
+            snd.playSound("eh-good-shooting-guy");
             break;
           case 1:
             snd.playSound("1shot1kill");
@@ -444,21 +452,15 @@ void game::update()
             snd.playSound("dabest");
             break;
           case 3:
-            //snd.playSound("fall-7-rise-8");
+            snd.playSound("he-is-dead-now");
             break;
           case 4:
-            snd.playSound("gonna");
-            break;
-          case 5:
             snd.playSound("know-who");
             break;
-          case 6: 
-            //snd.playSound("mom-get-the-camera");
+          case 5: 
+            snd.playSound("training-paid-off");
             break;
-          case 7:
-            //snd.playSound("my-gorilla-pit");
-            break;
-          case 8:
+          case 6:
             snd.playSound("pretty");
             break;
         }
@@ -536,6 +538,7 @@ void game::update()
     //player died logic
     zombies = {};
     player1->setLifeTime(SDL_GetTicks()-startTime);
+    snd.playSound("game-over");
   }
 }
 
