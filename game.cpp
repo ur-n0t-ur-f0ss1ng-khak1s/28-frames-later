@@ -188,7 +188,12 @@ game::game()
 
   loadAnimation(anim, "data/weapon-stoner/stoner",28);
   std::cout << "stoner anim size in game(): " << anim.size() << std::endl;
-  weapons.push_back(std::make_shared<gun>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,30,500,7,"stoner",true));
+  weapons.push_back(std::make_shared<gun>(anim,anim[0],1,7,20,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,75,30,500,20,"stoner",true));
+  anim.clear();
+
+  loadAnimation(anim, "data/weapon-fgc/fgc",16);
+  std::cout << "fgc anim size in game(): " << anim.size() << std::endl;
+  weapons.push_back(std::make_shared<gun>(anim,anim[0],1,4,11,vector3d(-1,-1.5,4.5),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),vector3d(0,0,0),100,1000,25,50,1000,5,"fgc",true));
   anim.clear();
 
   loadAnimation(anim, "data/weapon-mosin/mosin-nagant",55);
@@ -210,6 +215,7 @@ game::game()
   player1->addWeapon(weapons[2]);
   player1->addWeapon(weapons[3]);
   player1->addWeapon(weapons[4]);
+  player1->addWeapon(weapons[5]);
   anim.clear();
   loadAnimation(zombieAnim,"data/zombie1/zombie",60);
   //loadAnimation(zombieAnim,"data/octahedron/octahedron",60);
